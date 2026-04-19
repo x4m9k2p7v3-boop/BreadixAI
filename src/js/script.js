@@ -40,65 +40,73 @@ const attachedFilesContainer = document.getElementById('attachedFiles');
  * Проверяет авторизацию, инициализирует БД, загружает данные
  */
 document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        // Параллельная инициализация БД
+        await Promise.all([
+            stableDB.init(),
+            dbAdapter.init()
+        ]);
 
-    // ВАЖНО: Сначала инициализируем БД и session-manager
-    await stableDB.init();
+        // Ждем инициализации sessionManager если он есть
+        if (window.sessionManager && !window.sessionManager.initialized) {
+            await Promise.race([
+                new Promise(resolve => {
+                    const checkInit = setInterval(() => {
+                        if (window.sessionManager.initialized) {
+                            clearInterval(checkInit);
+                            resolve();
+                        }
+                    }, 50);
+                }),
+                new Promise(resolve => setTimeout(resolve, 2000)) // Таймаут 2 секунды
+            ]);
+        }
 
-    // Ждем инициализации sessionManager если он есть
-    if (window.sessionManager && !window.sessionManager.initialized) {
-        await new Promise(resolve => {
-            const checkInit = setInterval(() => {
-                if (window.sessionManager.initialized) {
-                    clearInterval(checkInit);
-                    resolve();
-                }
-            }, 50);
-            // Таймаут 2 секунды
-            setTimeout(() => {
-                clearInterval(checkInit);
-                resolve();
-            }, 2000);
-        });
+        // Проверка сессии через session-manager
+        let isLoggedIn = false;
+        if (window.sessionManager) {
+            const session = await sessionManager.restoreSession();
+            isLoggedIn = session !== null;
+        } else {
+            // Fallback на localStorage
+            isLoggedIn = localStorage.getItem('breadixai_logged_in') === 'true';
+        }
+
+        if (!isLoggedIn) {
+            window.location.href = 'pages/sign_in.html';
+            return;
+        }
+
+        // Миграция данных из localStorage в IndexedDB (один раз)
+        const migrated = await stableDB.getAppSetting('migration_completed');
+        if (!migrated) {
+            await stableDB.migrateFromLocalStorage();
+            await stableDB.saveAppSetting('migration_completed', true);
+        }
+
+        // Параллельная загрузка данных и настройка UI
+        await Promise.all([
+            loadChatHistory(),
+            loadCurrentChatId()
+        ]);
+
+        // Синхронные операции UI (быстрые)
+        loadSelectedModel();
+        loadSearchState();
+        loadModelTokens();
+        setupEventListeners();
+        autoResizeTextarea();
+        createModelDropdownInline();
+        updateModelDisplay();
+        initUserMenu();
+        updateTokenCounter();
+
+        // Убираем экран загрузки только когда всё готово
+        hideLoadingScreen();
+    } catch (error) {
+        console.error('Initialization error:', error);
+        hideLoadingScreen();
     }
-
-    // Проверка сессии через session-manager
-    let isLoggedIn = false;
-    if (window.sessionManager) {
-        const session = await sessionManager.restoreSession();
-        isLoggedIn = session !== null;
-    } else {
-        // Fallback на localStorage
-        isLoggedIn = localStorage.getItem('breadixai_logged_in') === 'true';
-    }
-
-    if (!isLoggedIn) {
-        window.location.href = 'pages/sign_in.html';
-        return;
-    }
-
-    // ВАЖНО: Сначала инициализируем БД и session-manager
-    await stableDB.init();
-    await dbAdapter.init();
-
-    // Миграция данных из localStorage в IndexedDB (один раз)
-    const migrated = await stableDB.getAppSetting('migration_completed');
-    if (!migrated) {
-        await stableDB.migrateFromLocalStorage();
-        await stableDB.saveAppSetting('migration_completed', true);
-    }
-
-    // Потом загружаем данные
-    await loadChatHistory();
-    loadSelectedModel();
-    loadSearchState();
-    loadModelTokens();
-    setupEventListeners();
-    autoResizeTextarea();
-    createModelDropdownInline();
-    updateModelDisplay();
-    await loadCurrentChatId();
-    initUserMenu();
-    updateTokenCounter();
 });
 
 function setupEventListeners() {
@@ -347,7 +355,7 @@ async function streamAIMessageFromAPI(response) {
 
     messageDiv.innerHTML = `
         <div class="message-avatar">
-            <img src="BreadixWebSite.png" alt="AI">
+            <img src="public/BreadixWebSite.png" alt="AI">
         </div>
         <div class="message-body">
             <div class="model-badge">${modelName}</div>
@@ -631,7 +639,7 @@ function addTypingIndicator() {
     if (hasThinking) {
         typingDiv.innerHTML = `
             <div class="message-avatar">
-                <img src="BreadixWebSite.png" alt="AI">
+                <img src="public/BreadixWebSite.png" alt="AI">
             </div>
             <div class="message-body">
                 <div class="message-content">
@@ -651,7 +659,7 @@ function addTypingIndicator() {
         const thinkingPhrase = getContextualThinkingPhrase();
         typingDiv.innerHTML = `
             <div class="message-avatar">
-                <img src="BreadixWebSite.png" alt="AI">
+                <img src="public/BreadixWebSite.png" alt="AI">
             </div>
             <div class="message-body">
                 <div class="message-content">
@@ -1083,7 +1091,7 @@ function loadChat(chatId) {
             messageDiv.className = 'message ai';
             messageDiv.innerHTML = `
                 <div class="message-avatar">
-                    <img src="BreadixWebSite.png" alt="AI">
+                    <img src="public/BreadixWebSite.png" alt="AI">
                 </div>
                 <div class="message-body">
                     <div class="message-content">${marked.parse(msg.content)}</div>
@@ -1574,14 +1582,15 @@ function showTokenLimitModal() {
 // LOADING SCREEN
 // ========================================
 
-window.addEventListener('load', () => {
+function hideLoadingScreen() {
     const loadingScreen = document.getElementById('loadingScreen');
     if (loadingScreen) {
+        loadingScreen.style.opacity = '0';
         setTimeout(() => {
             loadingScreen.remove();
-        }, 1500);
+        }, 300);
     }
-});
+}
 
 // ========================================
 // RIPPLE EFFECT
