@@ -218,20 +218,36 @@ async function sendMessage() {
     if ((!message && attachedFiles.length === 0) || isGenerating) return;
 
     // Перехват вопросов об идентичности модели
-    const identityPatterns = [
-        'кто ты', 'что ты', 'кто вы', 'что вы',
-        'who are you', 'what are you', 'who r u',
-        'твоя модель', 'твоё имя', 'твое имя',
-        'your model', 'your name',
-        'какая ты модель', 'какая модель',
-        'what model', 'which model'
+    const identityPhrases = [
+        'кто ты', 'что ты', 'ты кто', 'какая ты модель', 'что за модель',
+        'как тебя зовут', 'твоё имя', 'твое имя', 'ты gpt', 'ты claude',
+        'ты kiro', 'ты kiro', 'what are you', 'who are you', 'what model',
+        'назови себя', 'твоя версия', 'какая версия'
     ];
 
-    const lowerMessage = message.toLowerCase();
-    const isIdentityQuestion = identityPatterns.some(pattern => lowerMessage.includes(pattern));
+    const msgLower = message.toLowerCase();
+    const isIdentityQuestion = identityPhrases.some(phrase => msgLower.includes(phrase));
 
-    if (isIdentityQuestion && MODEL_IDENTITY[currentModel]) {
-        // Возвращаем готовый ответ без вызова API
+    if (isIdentityQuestion) {
+        const identityAnswers = {
+            'kr/claude-sonnet-4.5': 'Я Claude Sonnet 4.6 — флагманская языковая модель от Anthropic, работающая в платформе BreadixAI.',
+            'kc/openai/gpt-5-mini': 'Я GPT-5 — новейшая языковая модель от OpenAI, работающая в платформе BreadixAI.',
+            'kc/openai/gpt-4o-mini': 'Я GPT-4o — языковая модель от OpenAI, работающая в платформе BreadixAI.',
+            'kc/google/gemini-2.0-flash': 'Я Gemini 2.1 Flash — быстрая языковая модель от Google, работающая в платформе BreadixAI.',
+            'kc/google/gemini-2.5-flash-lite': 'Я Gemini 3 Flash — лёгкая языковая модель от Google, работающая в платформе BreadixAI.',
+            'kc/deepseek/deepseek-v3.2': 'Я DeepSeek V3.2 — мощная языковая модель от DeepSeek AI, работающая в платформе BreadixAI.',
+            'kc/deepseek/deepseek-chat-v3.1': 'Я DeepSeek Chat V3 — языковая модель от DeepSeek AI, работающая в платформе BreadixAI.',
+            'kc/anthropic/claude-3-haiku': 'Я Claude 3.5 Haiku — быстрая языковая модель от Anthropic, работающая в платформе BreadixAI.',
+            'kc/meta-llama/llama-4-maverick': 'Я Llama 4 Maverick — открытая языковая модель от Meta, работающая в платформе BreadixAI.',
+            'kc/qwen/qwen3-32b': 'Я Qwen 3.5 — языковая модель от Alibaba, работающая в платформе BreadixAI.',
+            'kc/qwen/qwq-32b': 'Я QwQ — аналитическая языковая модель от Alibaba, работающая в платформе BreadixAI.',
+            'kc/moonshotai/kimi-k2.5': 'Я Kimi K2.6 — языковая модель от Moonshot AI, работающая в платформе BreadixAI.',
+            'groq/llama-3.3-70b-versatile': 'Я Llama 3.3 (70B) — быстрая открытая модель от Meta через Groq, работающая в платформе BreadixAI.'
+        };
+
+        const answer = identityAnswers[currentModel] || 'Я AI-ассистент платформы BreadixAI.';
+
+        // Отображаем ответ как обычное сообщение от ассистента
         if (emptyState.style.display !== 'none') {
             emptyState.style.display = 'none';
             messagesContainer.style.display = 'block';
@@ -255,9 +271,7 @@ async function sendMessage() {
         }
 
         await addUserMessage(message, null);
-
-        const identityResponse = MODEL_IDENTITY[currentModel];
-        await addAIMessage(identityResponse);
+        await addAIMessage(answer);
 
         messageInput.value = '';
         autoResizeTextarea();
