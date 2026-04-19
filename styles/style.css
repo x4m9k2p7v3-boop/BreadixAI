@@ -1304,30 +1304,433 @@ body {
 }
 
 /* Mobile */
+/* ========================================
+   MOBILE OPTIMIZATION - ИДЕАЛЬНАЯ АДАПТАЦИЯ
+   ======================================== */
+
 @media (max-width: 768px) {
+    /* Sidebar - плавное выдвижение */
     .sidebar {
         position: fixed;
-        left: -270px;
+        left: -100%;
         height: 100%;
-        z-index: 100;
+        width: 280px;
+        z-index: 1000;
+        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
     }
 
     .sidebar.open {
         left: 0;
-        transform: translateX(0);
     }
 
+    /* Overlay для закрытия sidebar */
+    .sidebar.open::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 280px;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: -1;
+        animation: fadeIn 0.3s ease;
+    }
+
+    /* Кнопки управления */
+    .sidebar-toggle {
+        position: fixed;
+        top: 12px;
+        left: 12px;
+        z-index: 999;
+        width: 44px;
+        height: 44px;
+        background: var(--bg-secondary);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .new-chat-floating {
+        display: flex !important;
+        width: 56px;
+        height: 56px;
+        position: fixed;
+        bottom: 90px;
+        right: 16px;
+        z-index: 998;
+        box-shadow: 0 4px 16px rgba(77, 156, 248, 0.4);
+    }
+
+    /* Input area - увеличенные отступы */
     .input-area {
         left: 0;
+        padding: 12px;
+        padding-bottom: max(12px, env(safe-area-inset-bottom));
     }
 
+    .input-wrapper {
+        border-radius: 20px;
+        padding: 12px 16px;
+    }
+
+    /* Textarea - больше высота */
+    #messageInput {
+        font-size: 16px;
+        min-height: 44px;
+        max-height: 150px;
+    }
+
+    /* Кнопки - увеличенные для удобства */
+    .send-btn {
+        width: 44px;
+        height: 44px;
+        flex-shrink: 0;
+    }
+
+    .attach-btn,
+    .model-selector-inline-btn {
+        width: 40px;
+        height: 40px;
+        flex-shrink: 0;
+    }
+
+    /* Messages - оптимизированные отступы */
     .messages {
-        padding: 20px 16px 140px;
+        padding: 80px 12px 180px;
+        max-width: 100%;
     }
 
+    .message {
+        margin-bottom: 16px;
+    }
+
+    .message.user .message-content {
+        max-width: 85%;
+        font-size: 15px;
+        padding: 12px 16px;
+        border-radius: 18px 18px 4px 18px;
+    }
+
+    .message.ai {
+        gap: 8px;
+    }
+
+    .message-avatar {
+        width: 32px;
+        height: 32px;
+    }
+
+    .message.ai .message-content {
+        font-size: 15px;
+        line-height: 1.6;
+    }
+
+    /* Code blocks - горизонтальный скролл */
+    .message.ai .message-content pre {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .message.ai .message-content pre code {
+        font-size: 13px;
+    }
+
+    /* Action buttons - увеличенные */
+    .message-actions {
+        margin-top: 8px;
+    }
+
+    .action-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+    }
+
+    /* Empty state */
+    .empty-state {
+        padding: 60px 20px 40px;
+    }
+
+    .empty-state h1 {
+        font-size: 28px;
+        margin-bottom: 20px;
+    }
+
+    .empty-logo {
+        width: 64px;
+        height: 64px;
+    }
+
+    /* Suggestion chips - полная ширина */
     .suggestion-chips {
         flex-direction: column;
         width: 100%;
+        gap: 10px;
+    }
+
+    .suggestion-chip {
+        width: 100%;
+        padding: 14px 16px;
+        font-size: 14px;
+        border-radius: 12px;
+        justify-content: flex-start;
+    }
+
+    /* Model dropdown - на весь экран */
+    .model-dropdown-inline {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        top: auto;
+        margin: 0;
+        border-radius: 20px 20px 0 0;
+        max-height: 60vh;
+        min-width: auto;
+    }
+
+    .model-dropdown-inline.show {
+        animation: slideUpMobile 0.3s ease;
+    }
+
+    @keyframes slideUpMobile {
+        from {
+            transform: translateY(100%);
+        }
+        to {
+            transform: translateY(0);
+        }
+    }
+
+    /* Mode pills - увеличенные */
+    .mode-pill {
+        padding: 10px 16px;
+        font-size: 13px;
+        border-radius: 16px;
+    }
+
+    /* Attached files */
+    .attached-files {
+        gap: 8px;
+    }
+
+    .attached-file {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+
+    /* Toast - выше input */
+    .toast-container {
+        bottom: 120px;
+        width: calc(100% - 32px);
+        max-width: 400px;
+    }
+
+    .toast {
+        padding: 14px 18px;
+        font-size: 14px;
+        border-radius: 14px;
+    }
+
+    /* Settings modal - на весь экран */
+    .settings-modal {
+        padding: 0;
+    }
+
+    .settings-content {
+        width: 100%;
+        height: 100%;
+        max-width: 100%;
+        border-radius: 0;
+        flex-direction: column;
+    }
+
+    .settings-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .settings-nav {
+        flex-direction: row;
+        overflow-x: auto;
+        padding: 8px;
+        gap: 6px;
+    }
+
+    .settings-nav-item {
+        white-space: nowrap;
+        padding: 10px 16px;
+    }
+
+    .settings-main {
+        padding: 20px 16px;
+        overflow-y: auto;
+    }
+
+    /* User menu popup */
+    .user-menu-popup {
+        left: 12px;
+        right: 12px;
+        bottom: 70px;
+        width: auto;
+    }
+
+    /* Token counter */
+    .token-counter {
+        font-size: 12px;
+        padding: 4px 8px;
+    }
+
+    /* Token limit modal */
+    .token-limit-modal {
+        padding: 20px 16px;
+    }
+
+    .token-limit-content {
+        gap: 20px;
+    }
+
+    .token-limit-content h3 {
+        font-size: 20px;
+    }
+
+    .token-limit-content p {
+        font-size: 15px;
+    }
+
+    .token-limit-btn {
+        padding: 14px 28px;
+        font-size: 15px;
+    }
+
+    /* Context menu */
+    .context-menu {
+        min-width: 160px;
+        font-size: 14px;
+    }
+
+    .context-menu-item {
+        padding: 12px 14px;
+    }
+
+    /* Thinking block */
+    .thinking-block {
+        margin-bottom: 10px;
+    }
+
+    .thinking-header {
+        padding: 10px 12px;
+    }
+
+    .thinking-content {
+        padding: 12px;
+        font-size: 14px;
+        max-height: 250px;
+    }
+
+    /* Input footer */
+    .input-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        margin-top: 8px;
+    }
+
+    .input-hint {
+        font-size: 12px;
+        text-align: left;
+        margin-top: 0;
+    }
+
+    /* Loading screen */
+    .loading-logo {
+        width: 72px;
+        height: 72px;
+    }
+
+    .loading-text {
+        font-size: 22px;
+    }
+
+    /* Улучшенный скролл */
+    .chat-container,
+    .messages,
+    .model-dropdown-inline,
+    .settings-main {
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
+    }
+
+    /* Увеличенные touch targets */
+    button,
+    .chat-item,
+    .model-option {
+        min-height: 44px;
+    }
+
+    /* Отключаем hover эффекты на мобильных */
+    .chat-item:hover,
+    .model-option:hover,
+    .action-btn:hover {
+        transform: none;
+    }
+
+    /* Safe area для iPhone */
+    .input-area {
+        padding-bottom: calc(12px + env(safe-area-inset-bottom));
+    }
+
+    .sidebar {
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+}
+
+/* Дополнительная оптимизация для маленьких экранов */
+@media (max-width: 480px) {
+    .empty-state h1 {
+        font-size: 24px;
+    }
+
+    .message.user .message-content {
+        max-width: 90%;
+        font-size: 14px;
+    }
+
+    .message.ai .message-content {
+        font-size: 14px;
+    }
+
+    .model-badge {
+        font-size: 10px;
+        padding: 2px 6px;
+    }
+
+    .input-wrapper {
+        padding: 10px 12px;
+    }
+
+    .send-btn {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+/* Landscape mode на мобильных */
+@media (max-width: 768px) and (orientation: landscape) {
+    .messages {
+        padding: 70px 12px 140px;
+    }
+
+    .empty-state {
+        padding: 40px 20px;
+    }
+
+    .empty-state h1 {
+        font-size: 22px;
+    }
+
+    .model-dropdown-inline {
+        max-height: 70vh;
     }
 }
 
