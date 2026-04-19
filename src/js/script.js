@@ -13,7 +13,7 @@ let chatHistory = [];           // История всех чатов польз
 let currentChatId = null;       // ID текущего открытого чата
 let searchEnabled = false;      // Включен ли веб-поиск
 let isGenerating = false;       // Идет ли генерация ответа
-let currentModel = 'kr/claude-sonnet-4.5'; // Текущая выбранная модель
+let currentModel = 'kc/anthropic/claude-sonnet-4-5-20250929'; // Текущая выбранная модель
 let attachedFiles = [];         // Прикрепленные файлы
 let modelTokens = {};           // Счетчик токенов по моделям: { modelId: tokenCount }
 
