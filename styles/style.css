@@ -980,7 +980,6 @@ body {
 }
 
 .input-wrapper:focus-within {
-    border-color: var(--accent);
     box-shadow: 0 4px 16px rgba(77, 156, 248, 0.25);
 }
 
