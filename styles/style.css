@@ -1821,12 +1821,12 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-body.dark-theme .glass {
+.glass {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-body:not(.dark-theme) .glass {
+body.light-theme .glass {
     background: rgba(255, 255, 255, 0.7);
     border: 1px solid rgba(0, 0, 0, 0.1);
 }
@@ -1838,7 +1838,7 @@ body:not(.dark-theme) .glass {
     -webkit-backdrop-filter: blur(10px);
 }
 
-body:not(.dark-theme) .input-wrapper {
+body.light-theme .input-wrapper {
     background: rgba(255, 255, 255, 0.8);
 }
 
@@ -1848,7 +1848,7 @@ body:not(.dark-theme) .input-wrapper {
     -webkit-backdrop-filter: blur(10px);
 }
 
-body:not(.dark-theme) .message.user .message-content {
+body.light-theme .message.user .message-content {
     background: rgba(255, 255, 255, 0.9);
 }
 
@@ -1867,14 +1867,14 @@ body:not(.dark-theme) .message.user .message-content {
         inset -4px -4px 8px rgba(255, 255, 255, 0.05);
 }
 
-body:not(.dark-theme) .neumorphic {
-    box-shadow: 
+body.light-theme .neumorphic {
+    box-shadow:
         8px 8px 16px rgba(0, 0, 0, 0.1),
         -8px -8px 16px rgba(255, 255, 255, 0.9);
 }
 
-body:not(.dark-theme) .neumorphic:active {
-    box-shadow: 
+body.light-theme .neumorphic:active {
+    box-shadow:
         inset 4px 4px 8px rgba(0, 0, 0, 0.1),
         inset -4px -4px 8px rgba(255, 255, 255, 0.9);
 }
