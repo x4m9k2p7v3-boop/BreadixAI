@@ -935,6 +935,9 @@ function createNewChat() {
     showToast('Новый чат создан', 'plus');
 }
 
+// Export globally for features-integration.js
+window.createNewChat = createNewChat;
+
 function updateChatHistory() {
     chatHistoryContainer.innerHTML = '';
 
@@ -1664,7 +1667,6 @@ document.addEventListener('click', (e) => {
 });
 
 // Prevent body scroll when sidebar is open on mobile
-const sidebar = document.getElementById('sidebar');
 if (sidebar) {
     const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
