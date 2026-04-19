@@ -1593,9 +1593,10 @@ function hideLoadingScreen() {
 }
 
 // ========================================
-// RIPPLE EFFECT
+// RIPPLE EFFECT (DISABLED - CAUSED BUTTON SIZE ISSUES)
 // ========================================
 
+/*
 function createRipple(event) {
     const button = event.currentTarget;
     const ripple = document.createElement('span');
@@ -1624,12 +1625,13 @@ function createRipple(event) {
 // Add ripple effect to buttons
 document.addEventListener('DOMContentLoaded', () => {
     const rippleButtons = document.querySelectorAll('.send-btn, .new-chat-btn, .mode-pill, .suggestion-chip, .action-btn, .attach-btn, .model-selector-inline-btn');
-    
+
     rippleButtons.forEach(button => {
         button.style.position = 'relative';
         button.style.overflow = 'hidden';
         button.addEventListener('click', createRipple);
     });
 });
+*/
 
-console.log('✨ Loading screen and ripple effects loaded!');
+console.log('✨ Loading screen loaded!');
