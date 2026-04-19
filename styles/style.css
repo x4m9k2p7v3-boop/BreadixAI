@@ -1007,6 +1007,9 @@ body {
     gap: 5px;
     transition: all 0.15s ease;
     white-space: nowrap;
+    position: relative;
+    z-index: 10;
+    pointer-events: auto;
 }
 
 .model-selector-inline-btn:hover {
@@ -1061,6 +1064,9 @@ body {
     color: var(--text-secondary);
     transition: all 0.15s ease;
     flex-shrink: 0;
+    position: relative;
+    z-index: 10;
+    pointer-events: auto;
 }
 
 .attach-btn:hover {
@@ -1238,6 +1244,9 @@ body {
     align-items: center;
     gap: 5px;
     transition: all 0.15s ease;
+    position: relative;
+    z-index: 10;
+    pointer-events: auto;
 }
 
 .mode-pill:hover {
@@ -1262,6 +1271,9 @@ body {
     justify-content: center;
     transition: all 0.15s ease;
     color: white;
+    position: relative;
+    z-index: 10;
+    pointer-events: auto;
 }
 
 .send-btn:hover {
