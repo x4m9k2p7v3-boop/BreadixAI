@@ -1379,6 +1379,7 @@ body {
     .sidebar {
         position: fixed;
         left: -240px;
+        width: 240px;
         height: 100%;
         z-index: 100;
         transition: left 0.3s ease;
@@ -1388,18 +1389,20 @@ body {
         left: 0;
     }
 
-    /* Show sidebar toggle button on mobile */
+    /* Show sidebar toggle button on mobile - always visible */
     .sidebar-toggle {
         position: fixed !important;
-        top: 12px;
-        left: 12px;
-        z-index: 200 !important;
+        top: 16px;
+        left: 16px;
+        z-index: 250 !important;
         background: var(--bg-primary) !important;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--border);
     }
 
+    /* Don't move toggle when sidebar opens */
     .sidebar.open .sidebar-toggle {
-        left: 252px;
+        left: 16px;
     }
 
     /* Mobile overlay when sidebar is open */
@@ -1411,7 +1414,7 @@ body {
         right: 0;
         bottom: 0;
         background: rgba(0, 0, 0, 0.5);
-        z-index: -1;
+        z-index: 99;
     }
 
     .input-area {
@@ -1528,26 +1531,28 @@ body {
     }
 
     .sidebar {
-        width: 280px;
-        left: -280px;
+        width: 75vw;
+        max-width: 280px;
+        left: -75vw;
     }
 
     .sidebar.open::before {
-        left: 280px;
+        left: 75vw;
     }
 
     /* Sidebar toggle always visible on mobile */
     .sidebar-toggle {
         position: fixed !important;
-        top: 12px;
-        left: 12px;
-        z-index: 200 !important;
+        top: 16px;
+        left: 16px;
+        z-index: 250 !important;
         background: var(--bg-primary) !important;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--border);
     }
 
     .sidebar.open .sidebar-toggle {
-        left: 292px;
+        left: 16px;
     }
 
     .sidebar-header {
@@ -1767,12 +1772,20 @@ body {
 /* Small Mobile (max 360px) */
 @media (max-width: 360px) {
     .sidebar {
-        width: 260px;
-        left: -260px;
+        width: 80vw;
+        max-width: 260px;
+        left: -80vw;
     }
 
     .sidebar.open::before {
-        left: 260px;
+        left: 80vw;
+    }
+
+    .sidebar-toggle {
+        position: fixed !important;
+        top: 16px;
+        left: 16px;
+        z-index: 250 !important;
     }
 
     .messages {
