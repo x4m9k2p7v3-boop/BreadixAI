@@ -2,7 +2,7 @@ const API_CONFIG = {
     // Автоматически определяем окружение
     baseUrl: window.location.hostname === 'localhost'
         ? ''
-        : 'https://breadixai-production.up.railway.app',
+        : 'https://breadixai-api.v-e-kikkas.workers.dev',
     chatUrl: '/api/chat',
     searchUrl: '/api/search',
 
