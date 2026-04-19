@@ -17,7 +17,7 @@ const API_CONFIG = {
 
 const MODELS = {
     // Флагманские модели
-    'kc/anthropic/claude-sonnet-4-5-20250929': {
+    'kr/claude-sonnet-4.5': {
         name: 'Claude Sonnet 4.6',
         category: 'flagship',
         description: 'Флагманская модель Anthropic с глубоким мышлением',
