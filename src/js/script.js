@@ -271,7 +271,9 @@ async function sendMessage() {
         }
 
         await addUserMessage(message, null);
-        await addAIMessage(answer);
+
+        // Отображаем ответ через streamAIMessage
+        await streamAIMessage(answer);
 
         messageInput.value = '';
         autoResizeTextarea();
