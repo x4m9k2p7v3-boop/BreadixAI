@@ -120,6 +120,23 @@ function getModelsByCategory(category) {
         .map(([id, model]) => ({ id, ...model }));
 }
 
+// Identity responses for each model
+const MODEL_IDENTITY = {
+    'kr/claude-sonnet-4.5': 'Я Claude Sonnet 4.6 от Anthropic — флагманская языковая модель с глубоким мышлением и анализом.',
+    'kc/openai/gpt-5-mini': 'Я GPT-5 от OpenAI — компактная версия пятого поколения языковых моделей.',
+    'kc/deepseek/deepseek-v3.2': 'Я DeepSeek V3.2 от DeepSeek AI — модель с глубоким анализом и рассуждениями.',
+    'kc/moonshotai/kimi-k2.5': 'Я Kimi K2.6 от Moonshot AI — модель с большим контекстом до 200,000 токенов.',
+    'kc/anthropic/claude-3-haiku': 'Я Claude 3.5 Haiku от Anthropic — быстрая и эффективная языковая модель.',
+    'kc/google/gemini-2.5-flash-lite': 'Я Gemini 3 Flash от Google — облегчённая версия с огромным контекстом до 1,000,000 токенов.',
+    'kc/deepseek/deepseek-chat-v3.1': 'Я DeepSeek Chat V3 от DeepSeek AI — чат-модель для естественного общения.',
+    'kc/meta-llama/llama-4-maverick': 'Я Llama 4 Maverick от Meta AI — продвинутая языковая модель с независимым мышлением.',
+    'kc/qwen/qwen3-32b': 'Я Qwen 3.5 от Alibaba Cloud — сбалансированная модель для быстрой и точной работы.',
+    'kc/qwen/qwq-32b': 'Я QwQ от Alibaba Cloud — модель для сложных задач с глубоким мышлением.',
+    'kc/google/gemini-2.0-flash': 'Я Gemini 2.1 Flash от Google — молниеносная модель с огромным контекстом до 1,000,000 токенов.',
+    'kc/openai/gpt-4o-mini': 'Я GPT-4o от OpenAI — компактная версия GPT-4 Omni для быстрого решения задач.',
+    'groq/llama-3.3-70b-versatile': 'Я Llama 3.3 (70B) от Meta AI на платформе Groq — универсальная модель со сверхбыстрой обработкой.'
+};
+
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { API_CONFIG, MODELS, getModelName, getModelsByCategory };
+    module.exports = { API_CONFIG, MODELS, MODEL_IDENTITY, getModelName, getModelsByCategory };
 }

@@ -217,6 +217,53 @@ async function sendMessage() {
     const message = messageInput.value.trim();
     if ((!message && attachedFiles.length === 0) || isGenerating) return;
 
+    // Перехват вопросов об идентичности модели
+    const identityPatterns = [
+        'кто ты', 'что ты', 'кто вы', 'что вы',
+        'who are you', 'what are you', 'who r u',
+        'твоя модель', 'твоё имя', 'твое имя',
+        'your model', 'your name',
+        'какая ты модель', 'какая модель',
+        'what model', 'which model'
+    ];
+
+    const lowerMessage = message.toLowerCase();
+    const isIdentityQuestion = identityPatterns.some(pattern => lowerMessage.includes(pattern));
+
+    if (isIdentityQuestion && MODEL_IDENTITY[currentModel]) {
+        // Возвращаем готовый ответ без вызова API
+        if (emptyState.style.display !== 'none') {
+            emptyState.style.display = 'none';
+            messagesContainer.style.display = 'block';
+        }
+
+        if (!currentChatId) {
+            currentChatId = Date.now().toString();
+            const title = message.substring(0, 50) + (message.length > 50 ? '...' : '');
+            chatHistory.unshift({
+                id: currentChatId,
+                title: title,
+                timestamp: Date.now(),
+                messages: []
+            });
+            updateChatHistory();
+            saveCurrentChatId();
+
+            if (window.syncManager) {
+                syncManager.notifyChatCreated(currentChatId, title);
+            }
+        }
+
+        await addUserMessage(message, null);
+
+        const identityResponse = MODEL_IDENTITY[currentModel];
+        await addAIMessage(identityResponse);
+
+        messageInput.value = '';
+        autoResizeTextarea();
+        return;
+    }
+
     const maxTokens = MODELS[currentModel]?.maxTokens || 128000;
     const currentTokens = modelTokens[currentModel] || 0;
     if (currentTokens >= maxTokens) {
