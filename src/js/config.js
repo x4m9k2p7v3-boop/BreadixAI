@@ -32,6 +32,13 @@ const MODELS = {
         maxTokens: 128000,
         hasThinking: true
     },
+    'cerebras/gpt-oss-120b': {
+        name: 'GPT-OSS 120B Thinking',
+        category: 'flagship',
+        description: 'Мощная open-source модель с thinking режимом',
+        maxTokens: 128000,
+        hasThinking: true
+    },
     'cerebras/qwen-3-235b-a22b-instruct-2507': {
         name: 'Qwen3 235B Thinking',
         category: 'flagship',
@@ -43,6 +50,12 @@ const MODELS = {
         name: 'Llama 4 Maverick MoE',
         category: 'flagship',
         description: 'Mixture of Experts архитектура от Meta',
+        maxTokens: 128000
+    },
+    'kc/meta-llama/llama-4-maverick': {
+        name: 'Llama 4 Maverick',
+        category: 'flagship',
+        description: 'Продвинутая модель Llama 4 от Meta',
         maxTokens: 128000
     },
     'kc/moonshotai/kimi-k2.5': {
@@ -59,7 +72,7 @@ const MODELS = {
         hasVision: true
     },
     'kc/deepseek/deepseek-v3.2': {
-        name: 'DeepSeek V3.2 Thinking',
+        name: 'DeepSeek V3.2',
         category: 'flagship',
         description: 'Глубокий анализ и рассуждения',
         maxTokens: 64000,
@@ -67,18 +80,87 @@ const MODELS = {
     },
 
     // Продвинутые модели
+    'kr/claude-haiku-4.5': {
+        name: 'Claude Haiku 4.5',
+        category: 'advanced',
+        description: 'Быстрая и эффективная модель от Anthropic',
+        maxTokens: 200000,
+        hasVision: true
+    },
     'cerebras/llama-4-scout-17b-16e-instruct': {
-        name: 'Llama 4 Scout 10M',
+        name: 'Llama 4 Scout',
         category: 'advanced',
         description: 'Разведывательная модель Llama 4',
         maxTokens: 128000
     },
+    'kc/meta-llama/llama-4-scout': {
+        name: 'Llama 4 Scout',
+        category: 'advanced',
+        description: 'Разведывательная модель Llama 4',
+        maxTokens: 128000
+    },
+    'cerebras/qwen-3-32b': {
+        name: 'Qwen3 32B',
+        category: 'advanced',
+        description: 'Продвинутая модель Qwen для сложных задач',
+        maxTokens: 32000
+    },
     'groq/qwen/qwen3-32b': {
+        name: 'Qwen3 32B Thinking',
+        category: 'advanced',
+        description: 'Модель для сложных задач с thinking режимом',
+        maxTokens: 32000,
+        hasThinking: true
+    },
+    'kc/qwen/qwen3-32b': {
+        name: 'Qwen3 32B',
+        category: 'advanced',
+        description: 'Продвинутая модель Qwen',
+        maxTokens: 32000
+    },
+    'kc/qwen/qwq-32b': {
         name: 'QwQ 32B Thinking',
         category: 'advanced',
         description: 'Модель для сложных задач с thinking режимом',
         maxTokens: 32000,
         hasThinking: true
+    },
+    'kc/qwen/qwen3-8b': {
+        name: 'Qwen3 8B',
+        category: 'advanced',
+        description: 'Компактная модель Qwen',
+        maxTokens: 32000
+    },
+    'kc/qwen/qwen3-coder': {
+        name: 'Qwen3 Coder',
+        category: 'advanced',
+        description: 'Специализирована на программировании',
+        maxTokens: 32000
+    },
+    'qw/qwen3-coder-plus': {
+        name: 'Qwen3 Coder Plus',
+        category: 'advanced',
+        description: 'Улучшенная версия для программирования',
+        maxTokens: 32000
+    },
+    'qw/qwen3-coder-flash': {
+        name: 'Qwen3 Coder Flash',
+        category: 'advanced',
+        description: 'Быстрая версия для программирования',
+        maxTokens: 32000
+    },
+    'qw/vision-model': {
+        name: 'Qwen Vision',
+        category: 'advanced',
+        description: 'Модель с поддержкой изображений',
+        maxTokens: 32000,
+        hasVision: true
+    },
+    'qw/coder-model': {
+        name: 'Qwen Coder',
+        category: 'advanced',
+        description: 'Специализирована на программировании',
+        maxTokens: 32000
     },
     'kc/openai/gpt-5-nano': {
         name: 'GPT-5 Nano',
@@ -87,10 +169,17 @@ const MODELS = {
         maxTokens: 200000,
         hasVision: true
     },
-    'gemini-cli/gemini-3-flash-preview': {
-        name: 'Gemini 2.5 Flash',
+    'kc/openai/gpt-4o-mini': {
+        name: 'GPT-4o Mini',
         category: 'advanced',
-        description: 'Быстрая модель Google с большим контекстом',
+        description: 'Компактная версия GPT-4o',
+        maxTokens: 128000,
+        hasVision: true
+    },
+    'kc/google/gemini-2.5-flash-lite': {
+        name: 'Gemini 2.5 Flash Lite',
+        category: 'advanced',
+        description: 'Облегчённая версия Gemini 2.5',
         maxTokens: 1000000,
         hasVision: true
     },
@@ -99,19 +188,6 @@ const MODELS = {
         category: 'advanced',
         description: 'Продвинутая китайская языковая модель',
         maxTokens: 128000
-    },
-    'kr/claude-haiku-4.5': {
-        name: 'Claude Haiku 4.5',
-        category: 'advanced',
-        description: 'Быстрая и эффективная модель от Anthropic',
-        maxTokens: 200000,
-        hasVision: true
-    },
-    'kc/qwen/qwen3-coder': {
-        name: 'Qwen3 Coder',
-        category: 'advanced',
-        description: 'Специализирована на программировании',
-        maxTokens: 32000
     },
 
     // Быстрые модели
@@ -122,7 +198,19 @@ const MODELS = {
         maxTokens: 1000000,
         hasVision: true
     },
+    'cerebras/llama-3.3-70b': {
+        name: 'Llama 3.3 70B',
+        category: 'fast',
+        description: 'Универсальная модель Llama',
+        maxTokens: 128000
+    },
     'groq/llama-3.3-70b-versatile': {
+        name: 'Llama 3.3 70B',
+        category: 'fast',
+        description: 'Универсальная модель Llama',
+        maxTokens: 128000
+    },
+    'kc/meta-llama/llama-3.3-70b-instruct': {
         name: 'Llama 3.3 70B',
         category: 'fast',
         description: 'Универсальная модель Llama',
@@ -142,7 +230,7 @@ const MODELS = {
         hasVision: true
     },
     'kc/x-ai/grok-code-fast-1': {
-        name: 'Grok Code',
+        name: 'Grok Code Fast',
         category: 'fast',
         description: 'Быстрая модель для кода от X.AI',
         maxTokens: 128000
