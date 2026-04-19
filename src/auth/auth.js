@@ -252,7 +252,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
 
                 NotificationSystem.toast('Вход выполнен успешно', 'success', 2000);
-                setTimeout(() => window.location.href = 'index.html', 500);
+                setTimeout(() => window.location.href = '../index.html', 500);
             } else {
                 // Failed login
                 recordLoginAttempt(username);
