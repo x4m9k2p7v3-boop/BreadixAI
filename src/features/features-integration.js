@@ -282,7 +282,7 @@ async function initAdvancedUserMenu() {
 
                 showToast('Аккаунт удалён', 'check');
                 setTimeout(() => {
-                    window.location.href = 'sign_in.html';
+                    window.location.href = 'pages/sign_in.html';
                 }, 1000);
             }
         });

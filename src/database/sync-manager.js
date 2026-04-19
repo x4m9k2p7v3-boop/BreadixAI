@@ -232,7 +232,7 @@ class SyncManager {
 
         // Перенаправляем на страницу входа
         setTimeout(() => {
-            window.location.href = 'sign_in.html';
+            window.location.href = 'pages/sign_in.html';
         }, 1000);
     }
 

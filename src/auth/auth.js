@@ -380,7 +380,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             await stableDB.logActivity(username, 'registration');
 
             NotificationSystem.toast('Регистрация успешна! Перенаправление...', 'success', 2000);
-            setTimeout(() => window.location.href = 'sign_in.html', 1000);
+            setTimeout(() => window.location.href = 'pages/sign_in.html', 1000);
         });
     }
 });

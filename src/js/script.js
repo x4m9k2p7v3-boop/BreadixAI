@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     if (!isLoggedIn) {
-        window.location.href = 'sign_in.html';
+        window.location.href = 'pages/sign_in.html';
         return;
     }
 
@@ -1493,7 +1493,7 @@ function initUserMenu() {
                 localStorage.removeItem('breadixai_current_user');
                 NotificationSystem.toast('До скорой встречи!', 'info', 2000);
                 setTimeout(() => {
-                    window.location.href = 'sign_in.html';
+                    window.location.href = 'pages/sign_in.html';
                 }, 500);
             }
         });
