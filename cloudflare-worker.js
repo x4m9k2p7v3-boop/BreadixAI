@@ -42,22 +42,6 @@ async function handleRequest(request) {
     if (url.pathname === '/api/chat' && request.method === 'POST') {
         try {
             const body = await request.json()
-            const { model, messages, stream, temperature } = body
-
-            // Validation
-            if (!model) {
-                return new Response(JSON.stringify({ error: 'Model is required' }), {
-                    status: 400,
-                    headers: { 'Content-Type': 'application/json', ...corsHeaders }
-                })
-            }
-
-            if (!messages || !Array.isArray(messages) || messages.length === 0) {
-                return new Response(JSON.stringify({ error: 'Messages array is required' }), {
-                    status: 400,
-                    headers: { 'Content-Type': 'application/json', ...corsHeaders }
-                })
-            }
 
             if (!OMNIROUTE_KEY) {
                 return new Response(JSON.stringify({ error: 'API key not configured' }), {
@@ -67,7 +51,8 @@ async function handleRequest(request) {
             }
 
             // Make request to OmniRoute API
-            const apiUrl = `${OMNIROUTE_BASE_URL}/v1/chat/completions`
+            const baseUrl = OMNIROUTE_BASE_URL?.replace(/\/$/, '')
+            const apiUrl = `${baseUrl}/v1/chat/completions`
 
             const response = await fetch(apiUrl, {
                 method: 'POST',
@@ -75,45 +60,23 @@ async function handleRequest(request) {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${OMNIROUTE_KEY}`
                 },
-                body: JSON.stringify({
-                    model,
-                    messages,
-                    stream: stream || false,
-                    temperature: temperature || 0.7
-                })
+                body: JSON.stringify(body)
             })
 
-            if (!response.ok) {
-                const errorText = await response.text()
-                return new Response(JSON.stringify({
-                    error: `API Error: ${response.status}`,
-                    details: errorText
-                }), {
-                    status: response.status,
-                    headers: { 'Content-Type': 'application/json', ...corsHeaders }
-                })
-            }
+            // Проксируем ответ как есть, добавляя CORS заголовки
+            const newHeaders = new Headers(response.headers)
+            newHeaders.set('Access-Control-Allow-Origin', '*')
+            newHeaders.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+            newHeaders.set('Access-Control-Allow-Headers', 'Content-Type, Authorization')
 
-            // Handle streaming response
-            if (stream) {
-                return new Response(response.body, {
-                    headers: {
-                        'Content-Type': 'text/event-stream',
-                        'Cache-Control': 'no-cache',
-                        'Connection': 'keep-alive',
-                        ...corsHeaders
-                    }
-                })
-            } else {
-                const data = await response.json()
-                return new Response(JSON.stringify(data), {
-                    headers: { 'Content-Type': 'application/json', ...corsHeaders }
-                })
-            }
+            return new Response(response.body, {
+                status: response.status,
+                headers: newHeaders
+            })
         } catch (error) {
             return new Response(JSON.stringify({
-                error: 'Internal server error',
-                message: error.message
+                error: 'Chat request failed',
+                details: error.message
             }), {
                 status: 500,
                 headers: { 'Content-Type': 'application/json', ...corsHeaders }
