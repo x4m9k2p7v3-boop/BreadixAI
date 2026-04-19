@@ -1,17 +1,38 @@
 const express = require('express');
 const cors = require('cors');
 const fetch = require('node-fetch');
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
-app.use(express.static('.')); // Serve static files
 
-// API Configuration from .env
+// Serve static files from organized folders
+app.use('/styles', express.static(path.join(__dirname, 'styles')));
+app.use('/src', express.static(path.join(__dirname, 'src')));
+app.use('/public', express.static(path.join(__dirname, 'public')));
+app.use(express.static(__dirname));
+
+// Serve HTML pages from pages folder
+app.get('/sign_in.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'pages', 'sign_in.html'));
+});
+app.get('/sign_up.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'pages', 'sign_up.html'));
+});
+app.get('/password_recovery.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'pages', 'password_recovery.html'));
+});
+app.get('/terms.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'pages', 'terms.html'));
+});
+app.get('/privacy.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'pages', 'privacy.html'));
+});
+
 const OMNIROUTE_BASE_URL = process.env.API_URL ? process.env.API_URL.replace('/v1/chat/completions', '') : 'http://localhost:20128';
 const OMNIROUTE_KEY = process.env.API_KEY;
 const TAVILY_KEY = process.env.TAVILY_KEY;
@@ -21,7 +42,6 @@ console.log('   Base URL:', OMNIROUTE_BASE_URL);
 console.log('   API Key:', OMNIROUTE_KEY ? '✓ Configured' : '✗ Missing');
 console.log('   Tavily Key:', TAVILY_KEY ? '✓ Configured' : '✗ Missing');
 
-// Health check
 app.get('/health', (req, res) => {
     res.json({
         status: 'ok',
@@ -31,7 +51,6 @@ app.get('/health', (req, res) => {
     });
 });
 
-// Proxy endpoint for chat completions
 app.post('/api/chat', async (req, res) => {
     try {
         const { model, messages, stream, temperature } = req.body;
@@ -40,7 +59,6 @@ app.post('/api/chat', async (req, res) => {
             return res.status(500).json({ error: 'API key not configured on server' });
         }
 
-        // Forward request to OmniRoute
         const apiUrl = `${OMNIROUTE_BASE_URL}/v1/chat/completions`;
         console.log(`📤 Proxying to: ${apiUrl}`);
         console.log(`📝 Model: ${model}`);
@@ -70,18 +88,15 @@ app.post('/api/chat', async (req, res) => {
 
         console.log('✅ Response received, streaming to client...');
 
-        // Stream response back to client
         if (stream) {
             res.setHeader('Content-Type', 'text/event-stream');
             res.setHeader('Cache-Control', 'no-cache');
             res.setHeader('Connection', 'keep-alive');
-
             response.body.pipe(res);
         } else {
             const data = await response.json();
             res.json(data);
         }
-
     } catch (error) {
         console.error('❌ Proxy error:', error);
         res.status(500).json({
@@ -91,7 +106,6 @@ app.post('/api/chat', async (req, res) => {
     }
 });
 
-// Proxy endpoint for Tavily search
 app.post('/api/search', async (req, res) => {
     try {
         const { query, search_depth, max_results } = req.body;
@@ -126,7 +140,6 @@ app.post('/api/search', async (req, res) => {
         const data = await response.json();
         console.log(`✅ Search results: ${data.results?.length || 0} items`);
         res.json(data);
-
     } catch (error) {
         console.error('❌ Search proxy error:', error);
         res.status(500).json({
@@ -136,7 +149,6 @@ app.post('/api/search', async (req, res) => {
     }
 });
 
-// Start server
 app.listen(PORT, () => {
     console.log('');
     console.log('🚀 ================================');

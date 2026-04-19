@@ -1,0 +1,46 @@
+# EditorConfig - единый стиль кода для всех редакторов
+# https://editorconfig.org
+
+root = true
+
+# Для всех файлов
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# JavaScript файлы
+[*.js]
+indent_style = space
+indent_size = 4
+max_line_length = 120
+
+# JSON файлы
+[*.json]
+indent_style = space
+indent_size = 2
+
+# HTML файлы
+[*.html]
+indent_style = space
+indent_size = 4
+max_line_length = 120
+
+# CSS файлы
+[*.css]
+indent_style = space
+indent_size = 4
+max_line_length = 120
+
+# Markdown файлы
+[*.md]
+indent_style = space
+indent_size = 2
+trim_trailing_whitespace = false
+max_line_length = off
+
+# package.json
+[package.json]
+indent_style = space
+indent_size = 2

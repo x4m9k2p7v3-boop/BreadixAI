@@ -1,13 +1,13 @@
 {
-  "name": "breadixai",
+  "name": "breadixai-backend",
   "version": "1.0.0",
-  "description": "AI-powered chat interface with multi-model support",
+  "description": "Backend proxy for BreadixAI website",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js"
   },
-  "keywords": ["ai", "chat", "proxy", "openai", "claude"],
+  "keywords": ["ai", "chat", "proxy"],
   "author": "Breadix",
   "license": "MIT",
   "dependencies": {

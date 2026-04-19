@@ -5,21 +5,7 @@
 }
 
 :root {
-    /* Light theme */
-    --bg-primary: #F8FAFC;
-    --bg-card: #FFFFFF;
-    --text-primary: #1F2937;
-    --text-secondary: #6B7280;
-    --text-tertiary: #9CA3AF;
-    --border: #E5E7EB;
-    --border-hover: #D1D5DB;
-    --accent: #3B82F6;
-    --accent-hover: #2563EB;
-    --input-bg: #FFFFFF;
-    --gradient-start: rgba(59, 130, 246, 0.05);
-}
-
-body.dark-theme {
+    /* Dark theme only */
     --bg-primary: #0F172A;
     --bg-card: #1E293B;
     --text-primary: #F1F5F9;

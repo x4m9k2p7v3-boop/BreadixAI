@@ -1,0 +1,582 @@
+/* ===================================
+   VISUAL FIXES FOR ALL UI ELEMENTS
+   =================================== */
+
+/* Settings Navigation - Fix text overflow */
+.settings-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border-radius: 8px;
+    text-align: left;
+    width: 100%;
+    white-space: nowrap;
+}
+
+.settings-nav-item svg {
+    flex-shrink: 0;
+}
+
+.settings-nav-item.active {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.settings-nav-item:hover {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+/* Settings Buttons - Proper sizing */
+.settings-btn {
+    padding: 12px 24px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    display: inline-block;
+    text-align: center;
+    min-height: 44px;
+    line-height: 1.4;
+    width: auto;
+}
+
+.settings-btn:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+}
+
+.settings-btn.secondary {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+}
+
+.settings-btn.secondary:hover {
+    background: var(--border);
+}
+
+.settings-btn.danger {
+    background: #ef4444;
+}
+
+.settings-btn.danger:hover {
+    background: #dc2626;
+}
+
+/* Input Area - Fix button alignment */
+.input-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.attach-btn {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    flex-shrink: 0;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    transition: all 0.15s ease;
+}
+
+.attach-btn:hover {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.attach-btn.voice-active {
+    background: #ef4444;
+    color: white;
+    animation: voicePulse 1.5s ease-in-out infinite;
+}
+
+.attach-btn.voice-active svg {
+    animation: microphonePulse 1.5s ease-in-out infinite;
+}
+
+@keyframes voicePulse {
+    0%, 100% {
+        background: #ef4444;
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+    }
+    50% {
+        background: #dc2626;
+        box-shadow: 0 0 0 8px rgba(239, 68, 68, 0);
+    }
+}
+
+@keyframes microphonePulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+/* Message Input - Proper flex */
+#messageInput {
+    flex: 1;
+    min-width: 0;
+    padding: 10px 14px;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-size: 15px;
+    resize: none;
+    outline: none;
+    font-family: inherit;
+    line-height: 1.5;
+}
+
+/* Model Selector Inline - Fix overflow */
+.model-selector-inline {
+    flex-shrink: 0;
+    position: relative;
+}
+
+.model-selector-inline-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    color: var(--text-primary);
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    max-width: 180px;
+}
+
+.model-name-inline {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 140px;
+}
+
+.model-selector-inline-btn svg {
+    flex-shrink: 0;
+}
+
+.model-selector-inline-btn:hover {
+    background: var(--bg-secondary);
+}
+
+.model-selector-inline-btn.open {
+    background: var(--bg-secondary);
+}
+
+/* Send Button - Proper size */
+.send-btn {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    flex-shrink: 0;
+    border: none;
+    background: var(--accent);
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    transition: all 0.15s ease;
+}
+
+.send-btn:hover:not(:disabled) {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+}
+
+.send-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* Message Actions - Fix layout */
+.message-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+}
+
+.action-btn {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    flex-shrink: 0;
+    border: none;
+    background: transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    transition: all 0.15s ease;
+}
+
+.action-btn:hover {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.action-btn.active {
+    background: var(--bg-tertiary);
+    color: var(--accent);
+}
+
+.action-btn.favorite-active {
+    color: #fbbf24;
+}
+
+.action-btn.favorite-active svg {
+    fill: #fbbf24;
+}
+
+/* User Menu Button - Fix overflow */
+.user-menu-btn {
+    width: 100%;
+    padding: 10px 14px;
+    border: none;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.15s ease;
+    min-width: 0;
+}
+
+.user-menu-btn:hover {
+    background: var(--bg-tertiary);
+}
+
+.user-menu-btn svg,
+.user-menu-btn img {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+}
+
+.user-name {
+    flex: 1;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+}
+
+/* User Menu Popup - Fix positioning */
+.user-menu-popup {
+    position: fixed;
+    bottom: 80px;
+    left: 18px;
+    width: 234px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 8px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.2s ease;
+    z-index: 1000;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.user-menu-popup.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.user-menu-item {
+    width: 100%;
+    padding: 10px 12px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-primary);
+    font-size: 14px;
+    text-align: left;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+}
+
+.user-menu-item:hover {
+    background: var(--bg-tertiary);
+}
+
+.user-menu-item svg {
+    flex-shrink: 0;
+}
+
+/* Mode Pills - Fix layout */
+.mode-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text-secondary);
+    transition: all 0.15s ease;
+    white-space: nowrap;
+}
+
+.mode-pill:hover {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.mode-pill.active {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+}
+
+.mode-pill svg {
+    flex-shrink: 0;
+}
+
+/* Avatar Preview - Proper sizing */
+#avatarPreview {
+    width: 64px;
+    height: 64px;
+    min-width: 64px;
+    min-height: 64px;
+    border-radius: 50%;
+    background: var(--bg-tertiary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-primary);
+    overflow: hidden;
+}
+
+#avatarPreview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Activity History Items */
+.activity-item {
+    padding: 12px;
+    background: var(--bg-tertiary);
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+
+.activity-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+    gap: 12px;
+}
+
+.activity-item-action {
+    font-weight: 500;
+    color: var(--text-primary);
+    font-size: 14px;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.activity-item-time {
+    font-size: 12px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.activity-item-details {
+    font-size: 13px;
+    color: var(--text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Stats Cards */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.stat-card {
+    padding: 20px;
+    background: var(--bg-tertiary);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+}
+
+.stat-card-label {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.stat-card-value {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.stat-card-subtitle {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Responsive fixes */
+@media (max-width: 768px) {
+    .model-selector-inline-btn {
+        max-width: 120px;
+    }
+
+    .model-name-inline {
+        max-width: 80px;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ===================================
+   STRING LAMP ANIMATION
+   =================================== */
+
+/* String (ниточка) */
+.sidebar-toggle::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 100px;
+    background: linear-gradient(to bottom, transparent, var(--border));
+    opacity: 0.6;
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+/* When sidebar is collapsed, show string */
+.sidebar.collapsed .sidebar-toggle::before {
+    opacity: 1;
+}
+
+/* Pull animation on click */
+.sidebar-toggle.pulling {
+    animation: pullDown 0.4s ease;
+}
+
+.sidebar-toggle.pulling::before {
+    animation: stringPull 0.4s ease;
+}
+
+@keyframes pullDown {
+    0% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(12px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+@keyframes stringPull {
+    0% {
+        height: 100px;
+        top: -100px;
+    }
+    40% {
+        height: 88px;
+        top: -88px;
+    }
+    100% {
+        height: 100px;
+        top: -100px;
+    }
+}
+
+/* Hide string when sidebar is open */
+.sidebar:not(.collapsed) .sidebar-toggle::before {
+    opacity: 0;
+    height: 0;
+    top: 0;
+}
+
+/* Smooth transition for string appearance */
+.sidebar-toggle::before {
+    transition: opacity 0.3s ease, height 0.3s ease, top 0.3s ease;
+}
+
+/* Make sure button has relative positioning */
+.sidebar-toggle {
+    position: relative;
+    overflow: visible;
+}

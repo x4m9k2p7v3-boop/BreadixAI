@@ -1,17 +1,9 @@
-// API Configuration - Using backend proxy
 const API_CONFIG = {
-    // Backend proxy endpoints (no API keys exposed to client)
     chatUrl: '/api/chat',
-    searchUrl: '/api/search',
-
-    // For local development, you can override with full URL:
-    // chatUrl: 'http://localhost:3000/api/chat',
-    // searchUrl: 'http://localhost:3000/api/search'
+    searchUrl: '/api/search'
 };
 
-// Models configuration
 const MODELS = {
-    // OpenAI
     'kc/openai/gpt-4.1-nano': {
         name: 'GPT-4.1 Mini',
         category: 'openai',
@@ -33,8 +25,6 @@ const MODELS = {
         maxTokens: 200000,
         hasVision: true
     },
-
-    // Meta Llama
     'kc/meta-llama/llama-3.3-70b-instruct': {
         name: 'Llama 4 Scout',
         category: 'llama',
@@ -53,8 +43,6 @@ const MODELS = {
         description: 'Полная версия Llama 4',
         maxTokens: 128000
     },
-
-    // Qwen
     'kc/qwen/qwen3-235b-a22b-thinking-2507': {
         name: 'Qwen3 235B',
         category: 'qwen',
@@ -81,8 +69,6 @@ const MODELS = {
         hasThinking: true,
         maxTokens: 32000
     },
-
-    // Other
     'kc/anthropic/claude-3-haiku': {
         name: 'Claude Sonnet 3.5',
         category: 'other',
@@ -124,19 +110,16 @@ const MODELS = {
     }
 };
 
-// Get model display name
 function getModelName(modelId) {
     return MODELS[modelId]?.name || modelId;
 }
 
-// Get models by category
 function getModelsByCategory(category) {
     return Object.entries(MODELS)
         .filter(([_, model]) => model.category === category)
         .map(([id, model]) => ({ id, ...model }));
 }
 
-// Export for use in other files
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { API_CONFIG, MODELS, getModelName, getModelsByCategory };
 }

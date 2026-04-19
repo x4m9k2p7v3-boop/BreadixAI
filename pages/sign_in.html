@@ -4,29 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Вход - BreadixAI</title>
-    <link rel="icon" type="image/png" href="BreadixWebSite.png">
-    <link rel="stylesheet" href="auth.css">
+    <link rel="icon" type="image/png" href="../public/BreadixWebSite.png">
+    <link rel="stylesheet" href="../styles/auth.css">
+    <link rel="stylesheet" href="../styles/notifications.css">
 </head>
 <body>
-    <!-- Theme Toggle -->
-    <button class="theme-toggle" id="themeToggle">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="5"></circle>
-            <line x1="12" y1="1" x2="12" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="23"></line>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-            <line x1="1" y1="12" x2="3" y2="12"></line>
-            <line x1="21" y1="12" x2="23" y2="12"></line>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-        </svg>
-    </button>
-
     <div class="auth-container">
         <!-- Logo -->
         <div class="auth-logo">
-            <img src="BreadixWebSite.png" alt="BreadixAI" class="logo-image">
+            <img src="../public/BreadixWebSite.png" alt="BreadixAI" class="logo-image">
             <h1 class="logo-text">BreadixAI</h1>
         </div>
 
@@ -84,8 +70,8 @@
                         <input type="checkbox" id="terms" required>
                         <span class="checkbox-text">
                             Я согласен с
-                            <a href="#" class="link">Условиями использования</a> и
-                            <a href="#" class="link">Политикой конфиденциальности</a> BreadixAI.
+                            <a href="terms.html" target="_blank" class="link">Условиями использования</a> и
+                            <a href="privacy.html" target="_blank" class="link">Политикой конфиденциальности</a> BreadixAI.
                         </span>
                     </label>
                 </div>
@@ -95,18 +81,33 @@
 
                 <!-- Links -->
                 <div class="auth-links">
-                    <span></span>
+                    <a href="password_recovery.html" class="link">Забыли пароль?</a>
                     <a href="sign_up.html" class="link">Регистрация</a>
                 </div>
             </form>
 
             <!-- Contact Link -->
             <div class="contact-link">
-                <a href="#" class="link-secondary">Связаться с нами</a>
+                <a href="https://t.me/Breadixx" target="_blank" class="link-secondary">Связаться с нами</a>
             </div>
         </div>
     </div>
 
-    <script src="auth.js"></script>
+    <!-- === UI COMPONENTS === -->
+    <script src="../src/js/notifications.js"></script>
+
+    <!-- === CORE UTILITIES === -->
+    <script src="../src/database/crypto-utils.js"></script>
+
+    <!-- === DATABASE LAYER === -->
+    <script src="../src/database/stable-database.js"></script>
+    <script src="../src/database/session-manager.js"></script>
+    <script src="../src/database/sync-manager.js"></script>
+
+    <!-- === FEATURES === -->
+    <script src="../src/features/features.js"></script>
+
+    <!-- === AUTH LOGIC === -->
+    <script src="../src/auth/auth.js"></script>
 </body>
 </html>

@@ -1,144 +1,96 @@
-# BreadixAI - Free AI Chat Platform
+# BreadixAI
 
-Бесплатная платформа для общения с различными AI моделями через единый интерфейс.
+AI-powered chat interface with multi-model support and web search capabilities.
 
-## 🚀 Возможности
+## Features
 
-- 🤖 Множество AI моделей (GPT, Claude, Llama, Qwen, DeepSeek и др.)
-- 🔍 Веб-поиск через Tavily
-- 📁 Поддержка файлов и изображений
-- 💬 История чатов
-- 🎨 Темная/светлая тема
-- 🔒 Безопасное хранение API ключей на сервере
+- 🤖 Multiple AI models support (GPT-4, Claude, etc.)
+- 🔍 Web search integration via Tavily API
+- 💾 Local data storage with IndexedDB
+- 🔐 User authentication system
+- 📱 Responsive design
+- 💬 Chat history management
+- 📎 File attachments support
 
-## 📦 Установка и запуск
+## Tech Stack
 
-### Локально
+**Backend:**
+- Node.js + Express
+- OmniRoute API proxy
+- Tavily Search API
 
-1. Установите зависимости:
+**Frontend:**
+- Vanilla JavaScript
+- IndexedDB for local storage
+- CSS Grid/Flexbox
+
+## Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/x4m9k2p7v3-boop/BreadixAI.git
+cd BreadixAI
+```
+
+2. Install dependencies:
 ```bash
 npm install
 ```
 
-2. Создайте файл `.env`:
-```env
-API_URL=http://localhost:20128/v1/chat/completions
-API_KEY=your-omniroute-api-key
-TAVILY_KEY=your-tavily-api-key
-PORT=3000
-```
-
-3. Запустите сервер:
+3. Configure environment variables:
 ```bash
-npm start
+cp .env.example .env
 ```
 
-4. Откройте в браузере: `http://localhost:3000`
+Edit `.env` and add your API keys:
+- `API_URL` - OmniRoute API endpoint
+- `API_KEY` - OmniRoute API key
+- `TAVILY_KEY` - Tavily Search API key
+- `PORT` - Server port (default: 3000)
 
-### Деплой на Render.com (Рекомендуется)
+## Running
 
-1. Создайте аккаунт на [Render.com](https://render.com)
-
-2. Нажмите "New +" → "Web Service"
-
-3. Подключите GitHub репозиторий
-
-4. Настройки:
-   - **Name**: breadixai
-   - **Environment**: Node
-   - **Build Command**: `npm install`
-   - **Start Command**: `npm start`
-   - **Plan**: Free
-
-5. Добавьте Environment Variables:
-   - `API_URL` = `http://localhost:20128/v1/chat/completions`
-   - `API_KEY` = ваш OmniRoute ключ
-   - `TAVILY_KEY` = ваш Tavily ключ
-
-6. Нажмите "Create Web Service"
-
-7. После деплоя получите URL типа: `https://breadixai.onrender.com`
-
-### Деплой на Railway.app
-
-1. Создайте аккаунт на [Railway.app](https://railway.app)
-
-2. "New Project" → "Deploy from GitHub repo"
-
-3. Выберите репозиторий
-
-4. Добавьте переменные окружения в Settings → Variables:
-   - `API_URL`
-   - `API_KEY`
-   - `TAVILY_KEY`
-
-5. Railway автоматически определит Node.js и запустит
-
-### Деплой на Vercel
-
-1. Установите Vercel CLI:
-```bash
-npm i -g vercel
-```
-
-2. Деплой:
-```bash
-vercel
-```
-
-3. Добавьте переменные окружения в Dashboard → Settings → Environment Variables
-
-## 🔧 Настройка OmniRoute
-
-Если у вас локальный OmniRoute на `localhost:20128`, для публичного доступа нужно:
-
-**Вариант 1**: Использовать ngrok для туннеля:
-```bash
-ngrok http 20128
-```
-Затем в `.env` укажите ngrok URL
-
-**Вариант 2**: Развернуть OmniRoute на облачном сервере
-
-## 📝 Структура проекта
-
-```
-breadixwebsite/
-├── server.js          # Backend прокси (скрывает API ключи)
-├── index.html         # Главная страница
-├── script.js          # Основная логика
-├── config.js          # Конфигурация API
-├── prompts.js         # Системные промпты для моделей
-├── style.css          # Стили
-├── auth.js/css        # Авторизация
-├── sign_in.html       # Страница входа
-├── sign_up.html       # Страница регистрации
-├── package.json       # Зависимости
-└── .env              # Переменные окружения (не коммитить!)
-```
-
-## 🔐 Безопасность
-
-- API ключи хранятся только на сервере в `.env`
-- Клиент не имеет доступа к ключам
-- Все запросы идут через backend прокси
-- `.env` добавлен в `.gitignore`
-
-## 🛠️ Разработка
-
-Для разработки с автоперезагрузкой:
+**Development mode:**
 ```bash
 npm run dev
 ```
 
-## 📄 Лицензия
+**Production mode:**
+```bash
+npm start
+```
+
+Open browser at `http://localhost:3000`
+
+## Project Structure
+
+```
+├── server.js              # Express backend server
+├── index.html             # Main chat interface
+├── pages/                 # Auth pages (sign_in, sign_up, recovery)
+├── src/
+│   ├── auth/              # Authentication system
+│   ├── database/          # IndexedDB managers
+│   ├── features/          # Additional features
+│   └── js/                # Core logic
+├── styles/                # CSS stylesheets
+├── public/                # Static assets
+├── docs/                  # Documentation
+└── config/                # Configuration files
+```
+
+## Documentation
+
+See `/docs` folder for detailed documentation:
+- `DATABASE_V3.md` - Database architecture
+- `PROJECT_STRUCTURE.md` - Project structure details
+- `FEATURES.md` - Features overview
+- `OPTIMIZATION_REPORT.md` - Performance optimizations
+
+## License
 
 MIT
 
-## 👤 Автор
+## Author
 
 Breadix
-
----
-
-**Важно**: Не коммитьте `.env` файл в Git! Ваши API ключи должны оставаться приватными.

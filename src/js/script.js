@@ -1,13 +1,23 @@
-// State
-let chatHistory = [];
-let currentChatId = null;
-let searchEnabled = false;
-let isGenerating = false;
-let currentModel = 'kc/openai/gpt-4.1-nano'; // Default model
-let attachedFiles = []; // Attached files array
-let modelTokens = {}; // Token count per model: { modelId: tokenCount }
+/**
+ * BreadixAI - Main Application Script
+ *
+ * Основная логика приложения для работы с AI чатами.
+ * Управляет чатами, сообщениями, UI и взаимодействием с API.
+ *
+ * @author Breadix
+ * @version 3.0.0
+ */
 
-// Elements
+// === GLOBAL STATE ===
+let chatHistory = [];           // История всех чатов пользователя
+let currentChatId = null;       // ID текущего открытого чата
+let searchEnabled = false;      // Включен ли веб-поиск
+let isGenerating = false;       // Идет ли генерация ответа
+let currentModel = 'kc/openai/gpt-4.1-nano'; // Текущая выбранная модель
+let attachedFiles = [];         // Прикрепленные файлы
+let modelTokens = {};           // Счетчик токенов по моделям: { modelId: tokenCount }
+
+// === DOM ELEMENTS ===
 const sidebar = document.getElementById('sidebar');
 const sidebarToggle = document.getElementById('sidebarToggle');
 const emptyState = document.getElementById('emptyState');
@@ -18,24 +28,67 @@ const newChatBtn = document.getElementById('newChatBtn');
 const newChatFloating = document.getElementById('newChatFloating');
 const chatHistoryContainer = document.getElementById('chatHistory');
 const searchBtn = document.getElementById('searchBtn');
-const themeToggle = document.getElementById('themeToggle');
 const modelSelectorInlineBtn = document.getElementById('modelSelectorInlineBtn');
 const currentModelNameInline = document.getElementById('currentModelNameInline');
 const attachBtn = document.getElementById('attachBtn');
 const fileInput = document.getElementById('fileInput');
 const attachedFilesContainer = document.getElementById('attachedFiles');
 
-// Initialize
-document.addEventListener('DOMContentLoaded', () => {
-    // Check if user is logged in
-    const isLoggedIn = localStorage.getItem('breadixai_logged_in');
+// === INITIALIZATION ===
+/**
+ * Инициализация приложения при загрузке страницы
+ * Проверяет авторизацию, инициализирует БД, загружает данные
+ */
+document.addEventListener('DOMContentLoaded', async () => {
+
+    // ВАЖНО: Сначала инициализируем БД и session-manager
+    await stableDB.init();
+
+    // Ждем инициализации sessionManager если он есть
+    if (window.sessionManager && !window.sessionManager.initialized) {
+        await new Promise(resolve => {
+            const checkInit = setInterval(() => {
+                if (window.sessionManager.initialized) {
+                    clearInterval(checkInit);
+                    resolve();
+                }
+            }, 50);
+            // Таймаут 2 секунды
+            setTimeout(() => {
+                clearInterval(checkInit);
+                resolve();
+            }, 2000);
+        });
+    }
+
+    // Проверка сессии через session-manager
+    let isLoggedIn = false;
+    if (window.sessionManager) {
+        const session = await sessionManager.restoreSession();
+        isLoggedIn = session !== null;
+    } else {
+        // Fallback на localStorage
+        isLoggedIn = localStorage.getItem('breadixai_logged_in') === 'true';
+    }
+
     if (!isLoggedIn) {
         window.location.href = 'sign_in.html';
         return;
     }
 
-    loadChatHistory();
-    loadTheme();
+    // ВАЖНО: Сначала инициализируем БД и session-manager
+    await stableDB.init();
+    await dbAdapter.init();
+
+    // Миграция данных из localStorage в IndexedDB (один раз)
+    const migrated = await stableDB.getAppSetting('migration_completed');
+    if (!migrated) {
+        await stableDB.migrateFromLocalStorage();
+        await stableDB.saveAppSetting('migration_completed', true);
+    }
+
+    // Потом загружаем данные
+    await loadChatHistory();
     loadSelectedModel();
     loadSearchState();
     loadModelTokens();
@@ -43,21 +96,16 @@ document.addEventListener('DOMContentLoaded', () => {
     autoResizeTextarea();
     createModelDropdownInline();
     updateModelDisplay();
-    loadCurrentChatId();
+    await loadCurrentChatId();
     initUserMenu();
     updateTokenCounter();
 });
 
-// Event Listeners
 function setupEventListeners() {
     sendBtn.addEventListener('click', sendMessage);
     newChatBtn.addEventListener('click', createNewChat);
     newChatFloating.addEventListener('click', createNewChat);
-    sidebarToggle.addEventListener('click', toggleSidebar);
-
-    if (themeToggle) {
-        themeToggle.addEventListener('click', toggleTheme);
-    }
+    // sidebarToggle handler moved to features-integration.js for animation
 
     messageInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
@@ -82,7 +130,6 @@ function setupEventListeners() {
         }
     });
 
-    // Suggestion chips
     document.querySelectorAll('.suggestion-chip').forEach(chip => {
         chip.addEventListener('click', () => {
             messageInput.value = chip.textContent.trim();
@@ -91,7 +138,6 @@ function setupEventListeners() {
         });
     });
 
-    // Close context menu on click outside
     document.addEventListener('click', (e) => {
         if (!e.target.closest('.context-menu') && !e.target.closest('.chat-menu-btn')) {
             closeContextMenu();
@@ -101,7 +147,6 @@ function setupEventListeners() {
         }
     });
 
-    // Model selector
     if (modelSelectorInlineBtn) {
         modelSelectorInlineBtn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -109,7 +154,6 @@ function setupEventListeners() {
         });
     }
 
-    // File attachment
     if (attachBtn) {
         attachBtn.addEventListener('click', () => {
             fileInput.click();
@@ -120,11 +164,9 @@ function setupEventListeners() {
         fileInput.addEventListener('change', handleFileSelect);
     }
 
-    // Handle paste event for images
     messageInput.addEventListener('paste', handlePaste);
 }
 
-// Handle paste event
 async function handlePaste(e) {
     const items = e.clipboardData?.items;
     if (!items) return;
@@ -152,40 +194,20 @@ async function handlePaste(e) {
     }
 }
 
-// Sidebar
 function toggleSidebar() {
     sidebar.classList.toggle('collapsed');
     sidebar.classList.toggle('open');
 }
 
-// Theme
-function toggleTheme() {
-    document.body.classList.toggle('dark-theme');
-    const isDark = document.body.classList.contains('dark-theme');
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
-}
-
-function loadTheme() {
-    const theme = localStorage.getItem('theme');
-    // Default to dark theme if no preference saved
-    if (!theme || theme === 'dark') {
-        document.body.classList.add('dark-theme');
-        localStorage.setItem('theme', 'dark');
-    }
-}
-
-// Auto-resize textarea
 function autoResizeTextarea() {
     messageInput.style.height = 'auto';
     messageInput.style.height = Math.min(messageInput.scrollHeight, 200) + 'px';
 }
 
-// Send Message
 async function sendMessage() {
     const message = messageInput.value.trim();
     if ((!message && attachedFiles.length === 0) || isGenerating) return;
 
-    // Check token limit before sending
     const maxTokens = MODELS[currentModel]?.maxTokens || 128000;
     const currentTokens = modelTokens[currentModel] || 0;
     if (currentTokens >= maxTokens) {
@@ -193,13 +215,11 @@ async function sendMessage() {
         return;
     }
 
-    // Hide empty state
     if (emptyState.style.display !== 'none') {
         emptyState.style.display = 'none';
         messagesContainer.style.display = 'block';
     }
 
-    // Create new chat if needed
     if (!currentChatId) {
         currentChatId = Date.now().toString();
         const title = message.substring(0, 50) + (message.length > 50 ? '...' : '') || 'Новый чат с файлами';
@@ -211,9 +231,13 @@ async function sendMessage() {
         });
         updateChatHistory();
         saveCurrentChatId();
+
+        // Уведомляем другие вкладки о создании чата
+        if (window.syncManager) {
+            syncManager.notifyChatCreated(currentChatId, title);
+        }
     }
 
-    // Build message content with files
     let fullMessage = message;
     let hasImages = false;
 
@@ -221,7 +245,7 @@ async function sendMessage() {
         hasImages = attachedFiles.some(f => f.data.type === 'image');
 
         if (!hasImages) {
-            // Text files only
+
             fullMessage += '\n\n--- Прикрепленные файлы ---\n';
             for (const file of attachedFiles) {
                 fullMessage += `\n--- Файл: ${file.name} ---\n${file.data.content}\n`;
@@ -229,13 +253,10 @@ async function sendMessage() {
         }
     }
 
-    // Add user message
-    addUserMessage(message, attachedFiles.length > 0 ? [...attachedFiles] : null);
+    await addUserMessage(message, attachedFiles.length > 0 ? [...attachedFiles] : null);
 
-    // Save files before clearing
     const filesToSend = hasImages ? [...attachedFiles] : null;
 
-    // Update token count for user message
     const userTokens = estimateTokens(fullMessage);
     if (!modelTokens[currentModel]) {
         modelTokens[currentModel] = 0;
@@ -244,7 +265,6 @@ async function sendMessage() {
     updateTokenCounter();
     saveModelTokens();
 
-    // Clear input and files
     messageInput.value = '';
     attachedFiles = [];
     updateAttachedFilesDisplay();
@@ -252,17 +272,14 @@ async function sendMessage() {
     sendBtn.disabled = true;
     isGenerating = true;
 
-    // Change send button to stop
     sendBtn.innerHTML = `
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
             <rect x="6" y="6" width="12" height="12" rx="2"></rect>
         </svg>
     `;
 
-    // Show typing indicator
     const typingId = addTypingIndicator();
 
-    // Call real AI API
     try {
         const response = await callAIModel(fullMessage, filesToSend);
         removeTypingIndicator(typingId);
@@ -271,7 +288,6 @@ async function sendMessage() {
         removeTypingIndicator(typingId);
         showToast('Ошибка при получении ответа от API', 'error');
 
-        // Reset state
         isGenerating = false;
         sendBtn.innerHTML = `
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -283,8 +299,7 @@ async function sendMessage() {
     }
 }
 
-// Add User Message
-function addUserMessage(content, files = null) {
+async function addUserMessage(content, files = null) {
     const messageDiv = document.createElement('div');
     messageDiv.className = 'message user';
 
@@ -321,10 +336,9 @@ function addUserMessage(content, files = null) {
     messagesContainer.appendChild(messageDiv);
     scrollToBottom();
 
-    saveMessageToChat('user', content);
+    await saveMessageToChat('user', content);
 }
 
-// Stream AI Message from Real API (SSE)
 async function streamAIMessageFromAPI(response) {
     const messageDiv = document.createElement('div');
     messageDiv.className = 'message ai';
@@ -371,7 +385,6 @@ async function streamAIMessageFromAPI(response) {
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
 
-    // Toggle thinking block
     thinkingToggle.addEventListener('click', () => {
         thinkingContent.classList.toggle('collapsed');
         thinkingToggle.classList.toggle('collapsed');
@@ -398,7 +411,6 @@ async function streamAIMessageFromAPI(response) {
                         const content = parsed.choices?.[0]?.delta?.content;
                         const reasoningContent = parsed.choices?.[0]?.delta?.reasoning_content;
 
-                        // Handle reasoning content (thinking)
                         if (reasoningContent) {
                             if (!thinkingStartTime) {
                                 thinkingStartTime = Date.now();
@@ -407,14 +419,12 @@ async function streamAIMessageFromAPI(response) {
                             thinkingText += reasoningContent;
                             thinkingContent.textContent = thinkingText + '▋';
 
-                            // Update timer
                             const elapsed = ((Date.now() - thinkingStartTime) / 1000).toFixed(1);
                             thinkingTimeSpan.textContent = `${elapsed}s`;
 
                             scrollToBottom();
                         }
 
-                        // Handle regular content
                         if (content) {
                             if (thinkingStartTime && !thinkingEndTime) {
                                 thinkingEndTime = Date.now();
@@ -424,7 +434,7 @@ async function streamAIMessageFromAPI(response) {
 
                             fullContent += content;
                             const parsed = marked.parse(fullContent);
-                            // Add cursor inside the last element, not after
+
                             const tempDiv = document.createElement('div');
                             tempDiv.innerHTML = parsed;
                             const lastElement = tempDiv.lastElementChild || tempDiv;
@@ -437,7 +447,7 @@ async function streamAIMessageFromAPI(response) {
                             scrollToBottom();
                         }
                     } catch (e) {
-                        // Skip invalid JSON
+
                     }
                 }
             }
@@ -447,13 +457,11 @@ async function streamAIMessageFromAPI(response) {
         showToast('Ошибка при получении ответа', 'error');
     }
 
-    // Remove cursor and render final
     contentDiv.innerHTML = marked.parse(fullContent);
     if (thinkingText) {
         thinkingContent.textContent = thinkingText;
     }
 
-    // Update token count for current model
     const userTokens = estimateTokens(fullContent);
     if (!modelTokens[currentModel]) {
         modelTokens[currentModel] = 0;
@@ -462,7 +470,6 @@ async function streamAIMessageFromAPI(response) {
     updateTokenCounter();
     saveModelTokens();
 
-    // Add copy buttons to code blocks
     contentDiv.querySelectorAll('pre code').forEach((block) => {
         const pre = block.parentElement;
         const header = document.createElement('div');
@@ -474,13 +481,11 @@ async function streamAIMessageFromAPI(response) {
         pre.insertBefore(header, block);
     });
 
-    // Add action buttons
     addMessageActions(messageDiv);
 
     scrollToBottom();
-    saveMessageToChat('ai', fullContent);
+    await saveMessageToChat('ai', fullContent);
 
-    // Reset send button
     isGenerating = false;
     sendBtn.innerHTML = `
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -491,7 +496,6 @@ async function streamAIMessageFromAPI(response) {
     messageInput.focus();
 }
 
-// Stream AI Message (character by character) - OLD VERSION, KEPT FOR FALLBACK
 async function streamAIMessage(content) {
     const messageDiv = document.createElement('div');
     messageDiv.className = 'message ai';
@@ -506,7 +510,6 @@ async function streamAIMessage(content) {
     messagesContainer.appendChild(messageDiv);
     const contentDiv = messageDiv.querySelector('.message-content');
 
-    // Stream text character by character
     let currentText = '';
     const words = content.split(' ');
 
@@ -517,10 +520,8 @@ async function streamAIMessage(content) {
         await sleep(30 + Math.random() * 40);
     }
 
-    // Remove cursor and render final
     contentDiv.innerHTML = marked.parse(content);
 
-    // Add copy buttons to code blocks
     contentDiv.querySelectorAll('pre code').forEach((block) => {
         const pre = block.parentElement;
         const header = document.createElement('div');
@@ -532,13 +533,11 @@ async function streamAIMessage(content) {
         pre.insertBefore(header, block);
     });
 
-    // Add action buttons
     addMessageActions(messageDiv);
 
     scrollToBottom();
-    saveMessageToChat('ai', content);
+    await saveMessageToChat('ai', content);
 
-    // Reset send button
     isGenerating = false;
     sendBtn.innerHTML = `
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -549,7 +548,6 @@ async function streamAIMessage(content) {
     messageInput.focus();
 }
 
-// Add message action buttons
 function addMessageActions(messageDiv) {
     const actionsDiv = document.createElement('div');
     actionsDiv.className = 'message-actions';
@@ -582,7 +580,6 @@ function addMessageActions(messageDiv) {
     messageDiv.querySelector('.message-body').appendChild(actionsDiv);
 }
 
-// Action button handlers
 window.copyCode = function(btn) {
     const pre = btn.closest('pre');
     const code = pre.querySelector('code');
@@ -623,17 +620,14 @@ window.toggleDislike = function(btn) {
     }
 };
 
-// Typing Indicator
 function addTypingIndicator() {
     const typingDiv = document.createElement('div');
     const typingId = 'typing-' + Date.now();
     typingDiv.id = typingId;
     typingDiv.className = 'message ai';
 
-    // Check if current model has thinking capability
     const hasThinking = MODELS[currentModel]?.hasThinking;
 
-    // For thinking models - simple "Думаю..." without animation
     if (hasThinking) {
         typingDiv.innerHTML = `
             <div class="message-avatar">
@@ -653,7 +647,7 @@ function addTypingIndicator() {
             </div>
         `;
     } else {
-        // For non-thinking models - contextual phrases with animation
+
         const thinkingPhrase = getContextualThinkingPhrase();
         typingDiv.innerHTML = `
             <div class="message-avatar">
@@ -677,7 +671,6 @@ function addTypingIndicator() {
     messagesContainer.appendChild(typingDiv);
     scrollToBottom();
 
-    // Animate thinking phrases only for non-thinking models
     if (!hasThinking) {
         startThinkingAnimation(typingId);
     }
@@ -685,48 +678,39 @@ function addTypingIndicator() {
     return typingId;
 }
 
-// Get contextual thinking phrase based on last user message
 function getContextualThinkingPhrase() {
     const chat = chatHistory.find(c => c.id === currentChatId);
     const lastMessage = chat?.messages[chat.messages.length - 1]?.content.toLowerCase() || '';
 
-    // Search-related
     if (searchEnabled || lastMessage.includes('найди') || lastMessage.includes('поищи') || lastMessage.includes('найти')) {
         return 'Ищу информацию...';
     }
 
-    // Code-related
     if (lastMessage.includes('код') || lastMessage.includes('функци') || lastMessage.includes('программ') ||
         lastMessage.includes('script') || lastMessage.includes('python') || lastMessage.includes('javascript')) {
         return 'Анализирую код...';
     }
 
-    // File-related
     if (attachedFiles.length > 0) {
         return 'Читаю файлы...';
     }
 
-    // Explanation-related
     if (lastMessage.includes('объясни') || lastMessage.includes('расскажи') || lastMessage.includes('что такое')) {
         return 'Формирую объяснение...';
     }
 
-    // Translation-related
     if (lastMessage.includes('перевед') || lastMessage.includes('translate')) {
         return 'Перевожу текст...';
     }
 
-    // Writing-related
     if (lastMessage.includes('напиши') || lastMessage.includes('создай') || lastMessage.includes('сгенерируй')) {
         return 'Создаю текст...';
     }
 
-    // Analysis-related
     if (lastMessage.includes('проанализируй') || lastMessage.includes('сравни') || lastMessage.includes('оцени')) {
         return 'Анализирую данные...';
     }
 
-    // Default phrases
     const defaultPhrases = [
         'Обрабатываю запрос...',
         'Формирую ответ...',
@@ -737,7 +721,6 @@ function getContextualThinkingPhrase() {
     return defaultPhrases[Math.floor(Math.random() * defaultPhrases.length)];
 }
 
-// Animate thinking phrases
 function startThinkingAnimation(typingId) {
     const typingDiv = document.getElementById(typingId);
     if (!typingDiv) return;
@@ -765,14 +748,13 @@ function startThinkingAnimation(typingId) {
         }
     }, 3000); // Change phrase every 3 seconds
 
-    // Store interval ID to clear it later
     typingDiv.dataset.thinkingInterval = interval;
 }
 
 function removeTypingIndicator(typingId) {
     const typingDiv = document.getElementById(typingId);
     if (typingDiv) {
-        // Clear thinking animation interval
+
         if (typingDiv.dataset.thinkingInterval) {
             clearInterval(parseInt(typingDiv.dataset.thinkingInterval));
         }
@@ -780,12 +762,10 @@ function removeTypingIndicator(typingId) {
     }
 }
 
-// Call Real AI API
 async function callAIModel(userMessage, files = null) {
     const chat = chatHistory.find(c => c.id === currentChatId);
     const messages = [];
 
-    // Add system prompt for current model
     const systemPrompt = MODEL_PROMPTS[currentModel] || `Ты полезный AI-ассистент. Сегодня ${new Date().toLocaleDateString('ru-RU', {
         year: 'numeric',
         month: 'long',
@@ -797,7 +777,6 @@ async function callAIModel(userMessage, files = null) {
         content: systemPrompt
     });
 
-    // If search is enabled, perform web search first
     let searchResults = '';
     if (searchEnabled) {
         try {
@@ -814,7 +793,6 @@ async function callAIModel(userMessage, files = null) {
         }
     }
 
-    // Add chat history for context
     if (chat && chat.messages) {
         chat.messages.forEach(msg => {
             messages.push({
@@ -824,10 +802,9 @@ async function callAIModel(userMessage, files = null) {
         });
     }
 
-    // Add current user message with images if present
     const hasVision = MODELS[currentModel]?.hasVision;
     if (files && files.length > 0 && hasVision) {
-        // Multimodal format for vision models
+
         const content = [];
 
         if (userMessage) {
@@ -853,7 +830,7 @@ async function callAIModel(userMessage, files = null) {
             content: content
         });
     } else {
-        // Text-only format
+
         messages.push({
             role: 'user',
             content: userMessage
@@ -868,7 +845,6 @@ async function callAIModel(userMessage, files = null) {
             temperature: 0.7
         };
 
-        // Use backend proxy instead of direct API call
         const response = await fetch(API_CONFIG.chatUrl, {
             method: 'POST',
             headers: {
@@ -888,10 +864,9 @@ async function callAIModel(userMessage, files = null) {
     }
 }
 
-// Perform web search using Tavily API
 async function performWebSearch(query) {
     try {
-        // Use backend proxy for search
+
         const response = await fetch(API_CONFIG.searchUrl, {
             method: 'POST',
             headers: {
@@ -914,7 +889,6 @@ async function performWebSearch(query) {
             return '';
         }
 
-        // Format search results
         let formattedResults = '';
         data.results.forEach((result, index) => {
             formattedResults += `${index + 1}. ${result.title}\n`;
@@ -929,7 +903,6 @@ async function performWebSearch(query) {
     }
 }
 
-// New Chat
 function createNewChat() {
     currentChatId = null;
     messagesContainer.innerHTML = '';
@@ -939,7 +912,6 @@ function createNewChat() {
     sendBtn.disabled = true;
     messageInput.focus();
 
-    // Reset tokens for current model
     modelTokens[currentModel] = 0;
     updateTokenCounter();
     saveModelTokens();
@@ -952,7 +924,6 @@ function createNewChat() {
     showToast('Новый чат создан', 'plus');
 }
 
-// Chat History Management
 function updateChatHistory() {
     chatHistoryContainer.innerHTML = '';
 
@@ -1000,7 +971,6 @@ function updateChatHistory() {
     });
 }
 
-// Context Menu
 window.showChatMenu = function(event, chatId) {
     event.stopPropagation();
     closeContextMenu();
@@ -1025,29 +995,43 @@ function closeContextMenu() {
     if (menu) menu.remove();
 }
 
-window.renameChat = function(chatId) {
+window.renameChat = async function(chatId) {
     const chat = chatHistory.find(c => c.id === chatId);
     if (!chat) return;
 
-    const newTitle = prompt('Переименовать чат:', chat.title);
+    const newTitle = await NotificationSystem.prompt('Введите новое название чата:', chat.title, 'Переименовать чат');
     if (newTitle && newTitle.trim()) {
         chat.title = newTitle.trim();
-        saveChatHistory();
+        await saveChatHistory();
         updateChatHistory();
+        showToast('Чат переименован', 'check');
+
+        // Уведомляем другие вкладки
+        if (window.syncManager) {
+            syncManager.notifyChatUpdated(chatId);
+        }
     }
     closeContextMenu();
 };
 
-window.deleteChat = function(chatId) {
-    if (!confirm('Удалить этот чат?')) return;
+window.deleteChat = async function(chatId) {
+    const confirmed = await NotificationSystem.confirm('Вы уверены, что хотите удалить этот чат? Это действие нельзя отменить.', 'Удаление чата');
+    if (!confirmed) return;
 
     chatHistory = chatHistory.filter(c => c.id !== chatId);
     if (currentChatId === chatId) {
         createNewChat();
     }
-    saveChatHistory();
+    await saveChatHistory();
+    await dbAdapter.deleteChat(chatId);
     updateChatHistory();
     closeContextMenu();
+    showToast('Чат удалён', 'check');
+
+    // Уведомляем другие вкладки
+    if (window.syncManager) {
+        syncManager.notifyChatDeleted(chatId);
+    }
 };
 
 function groupChatsByTime(chats) {
@@ -1116,41 +1100,44 @@ function loadChat(chatId) {
     updateTokenCounter();
 }
 
-// Save to Chat
-function saveMessageToChat(role, content) {
+async function saveMessageToChat(role, content) {
     const chat = chatHistory.find(c => c.id === currentChatId);
     if (chat) {
-        chat.messages.push({ role, content });
-        saveChatHistory();
+        chat.messages.push({ role, content, timestamp: new Date().toISOString() });
+        await saveChatHistory();
         updateTokenCounter();
     }
 }
 
-// LocalStorage
-function saveChatHistory() {
-    localStorage.setItem('breadixai_chats', JSON.stringify(chatHistory));
+async function saveChatHistory() {
+    await dbAdapter.saveChats(chatHistory);
 }
 
-function loadChatHistory() {
-    const saved = localStorage.getItem('breadixai_chats');
-    if (saved) {
-        chatHistory = JSON.parse(saved);
-        updateChatHistory();
-    }
+async function loadChatHistory() {
+    chatHistory = await dbAdapter.loadChats();
+    updateChatHistory();
 }
 
-// Save current chat ID
 function saveCurrentChatId() {
     if (currentChatId) {
-        localStorage.setItem('breadixai_current_chat', currentChatId);
+        dbAdapter.saveCurrentChatId(currentChatId);
+        // Также сохраняем в IndexedDB
+        stableDB.saveAppSetting('current_chat', currentChatId);
     } else {
         localStorage.removeItem('breadixai_current_chat');
+        stableDB.deleteAppSetting('current_chat');
     }
 }
 
-// Load current chat ID and restore session
-function loadCurrentChatId() {
-    const savedChatId = localStorage.getItem('breadixai_current_chat');
+async function loadCurrentChatId() {
+    // Пробуем загрузить из IndexedDB
+    let savedChatId = await stableDB.getAppSetting('current_chat');
+
+    // Fallback на localStorage
+    if (!savedChatId) {
+        savedChatId = dbAdapter.loadCurrentChatId();
+    }
+
     if (savedChatId && chatHistory.length > 0) {
         const chat = chatHistory.find(c => c.id === savedChatId);
         if (chat) {
@@ -1159,47 +1146,34 @@ function loadCurrentChatId() {
     }
 }
 
-// Save search state
-function saveSearchState() {
-    localStorage.setItem('breadixai_search_enabled', searchEnabled.toString());
+async function saveSearchState() {
+    await stableDB.saveAppSetting('search_enabled', searchEnabled);
+
+    // Уведомляем другие вкладки
+    if (window.syncManager) {
+        syncManager.notifySettingsChanged({ search_enabled: searchEnabled });
+    }
 }
 
-// Load search state
-function loadSearchState() {
-    const saved = localStorage.getItem('breadixai_search_enabled');
-    if (saved === 'true') {
+async function loadSearchState() {
+    const saved = await stableDB.getAppSetting('search_enabled');
+    if (saved === true) {
         searchEnabled = true;
         searchBtn.classList.add('active');
     }
 }
 
-// Save model tokens
-function saveModelTokens() {
-    localStorage.setItem('breadixai_model_tokens', JSON.stringify(modelTokens));
+async function saveModelTokens() {
+    await stableDB.saveAppSetting('model_tokens', modelTokens);
 }
 
-// Load model tokens
-function loadModelTokens() {
-    const saved = localStorage.getItem('breadixai_model_tokens');
+async function loadModelTokens() {
+    const saved = await stableDB.getAppSetting('model_tokens');
     if (saved) {
-        try {
-            modelTokens = JSON.parse(saved);
-        } catch (e) {
-            modelTokens = {};
-        }
+        modelTokens = saved;
     }
 }
 
-// Load search state
-function loadSearchState() {
-    const saved = localStorage.getItem('breadixai_search_enabled');
-    if (saved === 'true') {
-        searchEnabled = true;
-        searchBtn.classList.add('active');
-    }
-}
-
-// Utility
 function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
@@ -1215,7 +1189,6 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// Toast Notifications
 function showToast(message, icon = 'check') {
     const container = document.getElementById('toastContainer');
     const toast = document.createElement('div');
@@ -1246,7 +1219,6 @@ function showToast(message, icon = 'check') {
     }, 2500);
 }
 
-// Load model from localStorage
 function loadSelectedModel() {
     const saved = localStorage.getItem('breadixai_model');
     if (saved && MODELS[saved]) {
@@ -1254,12 +1226,10 @@ function loadSelectedModel() {
     }
 }
 
-// Save model to localStorage
 function saveSelectedModel() {
     localStorage.setItem('breadixai_model', currentModel);
 }
 
-// Select model
 function selectModel(modelId) {
     currentModel = modelId;
     saveSelectedModel();
@@ -1270,21 +1240,18 @@ function selectModel(modelId) {
     const modelName = getModelName(modelId);
     showToast(`Модель изменена: ${modelName}`, 'check');
 
-    // Update active state in dropdown
     document.querySelectorAll('.model-option').forEach(option => {
         option.classList.remove('active');
     });
     event.target.closest('.model-option').classList.add('active');
 }
 
-// Update model display
 function updateModelDisplay() {
     if (currentModelNameInline) {
         currentModelNameInline.textContent = getModelName(currentModel);
     }
 }
 
-// Create inline model dropdown
 function createModelDropdownInline() {
     const dropdown = document.createElement('div');
     dropdown.className = 'model-dropdown-inline';
@@ -1335,7 +1302,6 @@ function createModelDropdownInline() {
     document.getElementById('modelSelectorInline').appendChild(dropdown);
 }
 
-// Toggle inline model dropdown
 function toggleModelDropdownInline() {
     const dropdown = document.getElementById('modelDropdownInline');
     const button = document.getElementById('modelSelectorInlineBtn');
@@ -1344,7 +1310,6 @@ function toggleModelDropdownInline() {
     button.classList.toggle('open');
 }
 
-// Close inline model dropdown
 function closeModelDropdownInline() {
     const dropdown = document.getElementById('modelDropdownInline');
     const button = document.getElementById('modelSelectorInlineBtn');
@@ -1357,12 +1322,11 @@ function closeModelDropdownInline() {
     }
 }
 
-// Handle file selection
 async function handleFileSelect(event) {
     const files = Array.from(event.target.files);
 
     for (const file of files) {
-        // Check file size (max 10MB)
+
         if (file.size > 10 * 1024 * 1024) {
             showToast(`Файл ${file.name} слишком большой (макс. 10MB)`, 'error');
             continue;
@@ -1387,12 +1351,10 @@ async function handleFileSelect(event) {
     fileInput.value = ''; // Reset input
 }
 
-// Read file content
 function readFile(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
 
-        // Check if image
         if (file.type.startsWith('image/')) {
             reader.onload = (e) => {
                 resolve({
@@ -1403,7 +1365,7 @@ function readFile(file) {
             reader.onerror = reject;
             reader.readAsDataURL(file);
         } else {
-            // Text file
+
             reader.onload = (e) => {
                 resolve({
                     type: 'text',
@@ -1416,7 +1378,6 @@ function readFile(file) {
     });
 }
 
-// Update attached files display
 function updateAttachedFilesDisplay() {
     if (attachedFiles.length === 0) {
         attachedFilesContainer.classList.remove('show');
@@ -1451,21 +1412,18 @@ function updateAttachedFilesDisplay() {
     });
 }
 
-// Remove attached file
 window.removeAttachedFile = function(index) {
     attachedFiles.splice(index, 1);
     updateAttachedFilesDisplay();
     showToast('Файл удален', 'check');
 };
 
-// Format file size
 function formatFileSize(bytes) {
     if (bytes < 1024) return bytes + ' B';
     if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
     return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
 }
 
-// User Menu & Settings - Initialize after DOM loaded
 function initUserMenu() {
     const userMenuBtn = document.getElementById('userMenuBtn');
     const userMenuPopup = document.getElementById('userMenuPopup');
@@ -1476,102 +1434,76 @@ function initUserMenu() {
     const closeSettings = document.getElementById('closeSettings');
     const settingsNavItems = document.querySelectorAll('.settings-nav-item');
     const settingsTabs = document.querySelectorAll('.settings-tab');
-    const themeSelect = document.getElementById('themeSelect');
     const accountUsername = document.getElementById('accountUsername');
     const logoutBtnMenu = document.getElementById('logoutBtn');
 
     if (!userMenuBtn || !userMenuPopup) return;
 
-    // Load username
     const currentUser = localStorage.getItem('breadixai_current_user') || 'Пользователь';
     userName.textContent = currentUser;
     accountUsername.textContent = currentUser;
 
-    // Toggle user menu
     userMenuBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         userMenuPopup.classList.toggle('active');
     });
 
-    // Close menu when clicking outside
     document.addEventListener('click', (e) => {
         if (!userMenuBtn.contains(e.target) && !userMenuPopup.contains(e.target)) {
             userMenuPopup.classList.remove('active');
         }
     });
 
-    // Open settings modal
     openSettingsBtn.addEventListener('click', () => {
         userMenuPopup.classList.remove('active');
         settingsModal.classList.add('active');
-
-        // Load current theme
-        const savedTheme = localStorage.getItem('breadixai_theme') || 'dark';
-        themeSelect.value = savedTheme;
     });
 
-    // Close settings modal
     closeSettings.addEventListener('click', () => {
         settingsModal.classList.remove('active');
     });
 
-    // Close modal when clicking outside
     settingsModal.addEventListener('click', (e) => {
         if (e.target === settingsModal) {
             settingsModal.classList.remove('active');
         }
     });
 
-    // Settings navigation
     settingsNavItems.forEach(item => {
         item.addEventListener('click', () => {
             const tabName = item.getAttribute('data-tab');
 
-            // Update active nav item
             settingsNavItems.forEach(nav => nav.classList.remove('active'));
             item.classList.add('active');
 
-            // Update active tab
             settingsTabs.forEach(tab => tab.classList.remove('active'));
             document.getElementById(`tab-${tabName}`).classList.add('active');
         });
     });
 
-    // Theme change
-    themeSelect.addEventListener('change', (e) => {
-        const theme = e.target.value;
-        if (theme === 'dark') {
-            document.body.classList.add('dark-theme');
-        } else {
-            document.body.classList.remove('dark-theme');
-        }
-        localStorage.setItem('breadixai_theme', theme);
-        showToast('Тема изменена', 'check');
-    });
-
-    // Help button
     helpBtn.addEventListener('click', () => {
         userMenuPopup.classList.remove('active');
         showToast('Справка в разработке', 'info');
     });
 
-    // Logout button
     if (logoutBtnMenu) {
-        logoutBtnMenu.addEventListener('click', () => {
-            if (confirm('Вы уверены, что хотите выйти?')) {
+        logoutBtnMenu.addEventListener('click', async () => {
+            const confirmed = await NotificationSystem.confirm('Вы уверены, что хотите выйти из аккаунта?', 'Выход');
+            if (confirmed) {
                 localStorage.removeItem('breadixai_logged_in');
                 localStorage.removeItem('breadixai_current_user');
-                window.location.href = 'sign_in.html';
+                NotificationSystem.toast('До скорой встречи!', 'info', 2000);
+                setTimeout(() => {
+                    window.location.href = 'sign_in.html';
+                }, 500);
             }
         });
     }
 }
 
-// Token counting functions
 function estimateTokens(text) {
     if (!text) return 0;
-    // Approximate: 1 token ≈ 4 characters for Russian/mixed text
-    // For English it's closer to 0.75 words, but we use character-based for simplicity
+
     return Math.ceil(text.length / 4);
 }
 
@@ -1582,7 +1514,7 @@ function calculateChatTokens() {
     let total = 0;
     chat.messages.forEach(msg => {
         total += estimateTokens(msg.content);
-        // Add tokens for attached files
+
         if (msg.files && msg.files.length > 0) {
             msg.files.forEach(file => {
                 if (file.data && file.data.content) {
@@ -1606,7 +1538,6 @@ function updateTokenCounter() {
         tokenCount.textContent = formatNumber(currentTokens);
         tokenLimit.textContent = formatNumber(maxTokens);
 
-        // Update color based on usage
         const percentage = (currentTokens / maxTokens) * 100;
         if (percentage >= 100) {
             tokenCounter.classList.add('token-limit-reached');
@@ -1630,7 +1561,6 @@ function showTokenLimitModal() {
     if (modal && !modal.classList.contains('active')) {
         modal.classList.add('active');
 
-        // Add handler for new chat button
         const newChatBtn = document.getElementById('newChatFromLimit');
         if (newChatBtn) {
             newChatBtn.onclick = () => {

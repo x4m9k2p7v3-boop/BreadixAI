@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Политика конфиденциальности - BreadixAI</title>
+    <link rel="icon" type="image/png" href="BreadixWebSite.png">
+    <link rel="stylesheet" href="auth.css">
+    <style>
+        .privacy-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 40px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+        }
+        .privacy-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .privacy-header h1 {
+            font-size: 32px;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+        .privacy-header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        .privacy-content {
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+        .privacy-content h2 {
+            font-size: 20px;
+            margin-top: 32px;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+        .privacy-content p {
+            margin-bottom: 16px;
+            color: var(--text-secondary);
+        }
+        .privacy-content ul {
+            margin-left: 24px;
+            margin-bottom: 16px;
+        }
+        .privacy-content li {
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 32px;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .back-link:hover {
+            color: var(--accent-hover);
+        }
+        .highlight {
+            background: var(--gradient-start);
+            padding: 16px;
+            border-radius: 8px;
+            border-left: 3px solid var(--accent);
+            margin: 16px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="privacy-container">
+        <div class="privacy-header">
+            <h1>Политика конфиденциальности</h1>
+            <p>Последнее обновление: 19 апреля 2026</p>
+        </div>
+
+        <div class="privacy-content">
+            <div class="highlight">
+                <p><strong>Важно:</strong> Мы серьёзно относимся к защите ваших данных. Эта политика объясняет, какую информацию мы собираем и как её используем.</p>
+            </div>
+
+            <h2>1. Какие данные мы собираем</h2>
+
+            <h3>1.1 Данные аккаунта</h3>
+            <ul>
+                <li>Логин (имя пользователя)</li>
+                <li>Пароль (хранится в зашифрованном виде в localStorage браузера)</li>
+            </ul>
+
+            <h3>1.2 Данные использования</h3>
+            <ul>
+                <li>История ваших чатов с AI-моделями</li>
+                <li>Выбранные модели и настройки</li>
+                <li>Прикреплённые файлы и изображения</li>
+            </ul>
+
+            <h3>1.3 Технические данные</h3>
+            <ul>
+                <li>Логи запросов к API (для отладки и улучшения сервиса)</li>
+                <li>Информация о браузере и устройстве (автоматически)</li>
+            </ul>
+
+            <h2>2. Как мы используем данные</h2>
+            <ul>
+                <li>Для предоставления доступа к AI-моделям</li>
+                <li>Для сохранения истории ваших чатов</li>
+                <li>Для улучшения качества сервиса</li>
+                <li>Для технической поддержки и решения проблем</li>
+            </ul>
+
+            <h2>3. Хранение данных</h2>
+            <div class="highlight">
+                <p><strong>Локальное хранение:</strong> Ваши данные аккаунта и история чатов хранятся локально в вашем браузере (localStorage). Мы не храним эти данные на наших серверах.</p>
+            </div>
+            <ul>
+                <li>API ключи хранятся только на сервере в зашифрованном виде</li>
+                <li>История чатов хранится в localStorage вашего браузера</li>
+                <li>Прикреплённые файлы обрабатываются локально и не сохраняются на сервере</li>
+            </ul>
+
+            <h2>4. Передача данных третьим лицам</h2>
+            <p>Мы передаём ваши запросы следующим сервисам:</p>
+            <ul>
+                <li><strong>OmniRoute API</strong> — для обработки запросов к AI-моделям</li>
+                <li><strong>Tavily API</strong> — для веб-поиска (только при включении функции поиска)</li>
+            </ul>
+            <p>Мы не продаём и не передаём ваши личные данные третьим лицам в коммерческих целях.</p>
+
+            <h2>5. Безопасность</h2>
+            <ul>
+                <li>API ключи скрыты от клиента и хранятся только на сервере</li>
+                <li>Все запросы к API проходят через наш защищённый прокси-сервер</li>
+                <li>Мы используем HTTPS для защиты передачи данных</li>
+                <li>Пароли не хранятся в открытом виде</li>
+            </ul>
+
+            <h2>6. Ваши права</h2>
+            <p>Вы имеете право:</p>
+            <ul>
+                <li>Удалить свой аккаунт и все связанные данные</li>
+                <li>Очистить историю чатов в любой момент</li>
+                <li>Запросить информацию о хранящихся данных</li>
+                <li>Отказаться от использования сервиса</li>
+            </ul>
+
+            <h2>7. Cookies и localStorage</h2>
+            <p>Мы используем localStorage для:</p>
+            <ul>
+                <li>Хранения данных аккаунта</li>
+                <li>Сохранения истории чатов</li>
+                <li>Запоминания настроек (выбранная модель, тема)</li>
+            </ul>
+            <p>Вы можете очистить localStorage через настройки браузера.</p>
+
+            <h2>8. Изменения в политике</h2>
+            <p>Мы можем обновлять эту политику конфиденциальности. О значительных изменениях мы уведомим пользователей через платформу.</p>
+
+            <h2>9. Контакты</h2>
+            <p>Если у вас есть вопросы о конфиденциальности, свяжитесь с нами: <a href="https://t.me/Breadixx" target="_blank" class="link">@Breadixx</a></p>
+
+            <a href="sign_in.html" class="back-link">← Вернуться к входу</a>
+        </div>
+    </div>
+</body>
+</html>
