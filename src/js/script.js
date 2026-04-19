@@ -1560,7 +1560,7 @@ function initUserMenu() {
 
     helpBtn.addEventListener('click', () => {
         userMenuPopup.classList.remove('active');
-        showToast('Справка в разработке', 'info');
+        window.location.href = 'pages/help.html';
     });
 
     if (logoutBtnMenu) {
