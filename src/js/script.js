@@ -1569,3 +1569,58 @@ function showTokenLimitModal() {
         }
     }
 }
+
+// ========================================
+// LOADING SCREEN
+// ========================================
+
+window.addEventListener('load', () => {
+    const loadingScreen = document.getElementById('loadingScreen');
+    if (loadingScreen) {
+        setTimeout(() => {
+            loadingScreen.remove();
+        }, 1500);
+    }
+});
+
+// ========================================
+// RIPPLE EFFECT
+// ========================================
+
+function createRipple(event) {
+    const button = event.currentTarget;
+    const ripple = document.createElement('span');
+    const rect = button.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    const x = event.clientX - rect.left - size / 2;
+    const y = event.clientY - rect.top - size / 2;
+
+    ripple.style.width = ripple.style.height = size + 'px';
+    ripple.style.left = x + 'px';
+    ripple.style.top = y + 'px';
+    ripple.classList.add('ripple-effect');
+
+    const existingRipple = button.querySelector('.ripple-effect');
+    if (existingRipple) {
+        existingRipple.remove();
+    }
+
+    button.appendChild(ripple);
+
+    setTimeout(() => {
+        ripple.remove();
+    }, 600);
+}
+
+// Add ripple effect to buttons
+document.addEventListener('DOMContentLoaded', () => {
+    const rippleButtons = document.querySelectorAll('.send-btn, .new-chat-btn, .mode-pill, .suggestion-chip, .action-btn, .attach-btn, .model-selector-inline-btn');
+    
+    rippleButtons.forEach(button => {
+        button.style.position = 'relative';
+        button.style.overflow = 'hidden';
+        button.addEventListener('click', createRipple);
+    });
+});
+
+console.log('✨ Loading screen and ripple effects loaded!');
