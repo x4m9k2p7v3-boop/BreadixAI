@@ -1069,6 +1069,22 @@ body {
     color: var(--text-primary);
 }
 
+.attach-btn.voice-active {
+    color: #ff4444;
+    background: rgba(255, 68, 68, 0.1);
+    box-shadow: 0 0 20px rgba(255, 68, 68, 0.4);
+    animation: pulse-red 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-red {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(255, 68, 68, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 30px rgba(255, 68, 68, 0.6);
+    }
+}
+
 .attached-files {
     display: none;
     flex-wrap: wrap;
