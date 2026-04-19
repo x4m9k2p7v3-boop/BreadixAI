@@ -18,7 +18,7 @@ const API_CONFIG = {
 const MODELS = {
     // Флагманские модели
     'kr/claude-sonnet-4.5': {
-        name: 'Claude Sonnet',
+        name: 'Claude Sonnet 4.6',
         category: 'flagship',
         description: 'Флагманская модель Anthropic с глубоким мышлением',
         maxTokens: 200000,
@@ -26,21 +26,21 @@ const MODELS = {
         hasThinking: true
     },
     'kc/openai/gpt-5-mini': {
-        name: 'GPT-5 Mini',
+        name: 'GPT-5',
         category: 'flagship',
         description: 'Компактная версия GPT-5 от OpenAI',
         maxTokens: 200000,
         hasVision: true
     },
     'kc/deepseek/deepseek-v3.2': {
-        name: 'DeepSeek V3',
+        name: 'DeepSeek V3.2',
         category: 'flagship',
         description: 'Продвинутая модель с глубоким анализом',
         maxTokens: 64000,
         hasThinking: true
     },
     'kc/moonshotai/kimi-k2.5': {
-        name: 'Kimi K2.5',
+        name: 'Kimi K2.6',
         category: 'flagship',
         description: 'Модель с большим контекстом',
         maxTokens: 200000
@@ -48,21 +48,21 @@ const MODELS = {
 
     // Продвинутые модели
     'kc/anthropic/claude-3-haiku': {
-        name: 'Claude Haiku',
+        name: 'Claude 3.5 Haiku',
         category: 'advanced',
         description: 'Быстрая и эффективная модель от Anthropic',
         maxTokens: 200000,
         hasVision: true
     },
     'kc/google/gemini-2.5-flash-lite': {
-        name: 'Gemini Flash Lite',
+        name: 'Gemini 3 Flash',
         category: 'advanced',
         description: 'Облегчённая версия Gemini',
         maxTokens: 1000000,
         hasVision: true
     },
     'kc/deepseek/deepseek-chat-v3.1': {
-        name: 'DeepSeek Chat',
+        name: 'DeepSeek Chat V3',
         category: 'advanced',
         description: 'Чат-модель DeepSeek',
         maxTokens: 64000
@@ -74,13 +74,13 @@ const MODELS = {
         maxTokens: 128000
     },
     'kc/qwen/qwen3-32b': {
-        name: 'Qwen3 32B',
+        name: 'Qwen 3.5',
         category: 'advanced',
         description: 'Продвинутая модель Qwen',
         maxTokens: 32000
     },
     'kc/qwen/qwq-32b': {
-        name: 'QwQ 32B',
+        name: 'QwQ',
         category: 'advanced',
         description: 'Модель для сложных задач с thinking режимом',
         maxTokens: 32000,
@@ -89,21 +89,21 @@ const MODELS = {
 
     // Быстрые модели
     'kc/google/gemini-2.0-flash': {
-        name: 'Gemini Flash',
+        name: 'Gemini 2.1 Flash',
         category: 'fast',
         description: 'Молниеносная модель Google',
         maxTokens: 1000000,
         hasVision: true
     },
     'kc/openai/gpt-4o-mini': {
-        name: 'GPT-4o Mini',
+        name: 'GPT-4o',
         category: 'fast',
         description: 'Компактная версия GPT-4o',
         maxTokens: 128000,
         hasVision: true
     },
     'groq/llama-3.3-70b-versatile': {
-        name: 'Llama 3.3 Groq',
+        name: 'Llama 3.3 (70B)',
         category: 'fast',
         description: 'Универсальная модель Llama',
         maxTokens: 128000
