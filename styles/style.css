@@ -143,6 +143,30 @@ body {
     color: var(--text-primary);
 }
 
+/* Mobile sidebar toggle button (outside sidebar) */
+.sidebar-toggle-mobile {
+    display: none;
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--bg-primary);
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-primary);
+    z-index: 250;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.2s ease;
+}
+
+.sidebar-toggle-mobile:active {
+    transform: scale(0.95);
+}
+
 .new-chat-floating {
     width: 32px;
     height: 32px;
@@ -1376,33 +1400,27 @@ body {
         font-size: 14px;
     }
 
+    /* Show mobile toggle button */
+    .sidebar-toggle-mobile {
+        display: flex;
+    }
+
+    /* Hide desktop toggle */
+    .sidebar-toggle {
+        display: none;
+    }
+
     .sidebar {
         position: fixed;
         left: -240px;
         width: 240px;
         height: 100%;
-        z-index: 100;
+        z-index: 200;
         transition: left 0.3s ease;
     }
 
     .sidebar.open {
         left: 0;
-    }
-
-    /* Show sidebar toggle button on mobile - always visible */
-    .sidebar-toggle {
-        position: fixed !important;
-        top: 16px;
-        left: 16px;
-        z-index: 250 !important;
-        background: var(--bg-primary) !important;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        border: 1px solid var(--border);
-    }
-
-    /* Don't move toggle when sidebar opens */
-    .sidebar.open .sidebar-toggle {
-        left: 16px;
     }
 
     /* Mobile overlay when sidebar is open */
@@ -1414,7 +1432,7 @@ body {
         right: 0;
         bottom: 0;
         background: rgba(0, 0, 0, 0.5);
-        z-index: 99;
+        z-index: -1;
     }
 
     .input-area {
@@ -1530,6 +1548,16 @@ body {
         font-size: 14px;
     }
 
+    /* Show mobile toggle button */
+    .sidebar-toggle-mobile {
+        display: flex;
+    }
+
+    /* Hide desktop toggle */
+    .sidebar-toggle {
+        display: none;
+    }
+
     .sidebar {
         width: 75vw;
         max-width: 280px;
@@ -1538,21 +1566,6 @@ body {
 
     .sidebar.open::before {
         left: 75vw;
-    }
-
-    /* Sidebar toggle always visible on mobile */
-    .sidebar-toggle {
-        position: fixed !important;
-        top: 16px;
-        left: 16px;
-        z-index: 250 !important;
-        background: var(--bg-primary) !important;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        border: 1px solid var(--border);
-    }
-
-    .sidebar.open .sidebar-toggle {
-        left: 16px;
     }
 
     .sidebar-header {

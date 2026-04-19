@@ -20,6 +20,7 @@ let modelTokens = {};           // Счетчик токенов по модел
 // === DOM ELEMENTS ===
 const sidebar = document.getElementById('sidebar');
 const sidebarToggle = document.getElementById('sidebarToggle');
+const sidebarToggleMobile = document.getElementById('sidebarToggleMobile');
 const emptyState = document.getElementById('emptyState');
 const messagesContainer = document.getElementById('messages');
 const messageInput = document.getElementById('messageInput');
@@ -1646,16 +1647,31 @@ console.log('✨ Loading screen loaded!');
 // MOBILE OPTIMIZATIONS
 // ========================================
 
+// Mobile sidebar toggle button
+if (sidebarToggleMobile) {
+    sidebarToggleMobile.addEventListener('click', () => {
+        sidebar.classList.toggle('open');
+    });
+}
+
+// Desktop sidebar toggle button
+if (sidebarToggle) {
+    sidebarToggle.addEventListener('click', toggleSidebar);
+}
+
 // Close sidebar when clicking outside on mobile
 document.addEventListener('click', (e) => {
     if (window.innerWidth <= 768) {
         const sidebar = document.getElementById('sidebar');
+        const sidebarToggleMobile = document.getElementById('sidebarToggleMobile');
         const sidebarToggle = document.querySelector('.sidebar-toggle');
         const newChatFloating = document.querySelector('.new-chat-floating');
 
         if (sidebar && sidebar.classList.contains('open')) {
             // Check if click is outside sidebar and not on toggle buttons
             if (!sidebar.contains(e.target) &&
+                e.target !== sidebarToggleMobile &&
+                !sidebarToggleMobile?.contains(e.target) &&
                 e.target !== sidebarToggle &&
                 !sidebarToggle?.contains(e.target) &&
                 e.target !== newChatFloating &&
