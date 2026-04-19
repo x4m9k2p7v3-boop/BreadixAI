@@ -1638,3 +1638,75 @@ document.addEventListener('DOMContentLoaded', () => {
 */
 
 console.log('✨ Loading screen loaded!');
+
+// ========================================
+// MOBILE OPTIMIZATIONS
+// ========================================
+
+// Close sidebar when clicking outside on mobile
+document.addEventListener('click', (e) => {
+    if (window.innerWidth <= 768) {
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.querySelector('.sidebar-toggle');
+        const newChatFloating = document.querySelector('.new-chat-floating');
+
+        if (sidebar && sidebar.classList.contains('open')) {
+            // Check if click is outside sidebar and not on toggle buttons
+            if (!sidebar.contains(e.target) &&
+                e.target !== sidebarToggle &&
+                !sidebarToggle?.contains(e.target) &&
+                e.target !== newChatFloating &&
+                !newChatFloating?.contains(e.target)) {
+                sidebar.classList.remove('open');
+            }
+        }
+    }
+});
+
+// Prevent body scroll when sidebar is open on mobile
+const sidebar = document.getElementById('sidebar');
+if (sidebar) {
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.attributeName === 'class') {
+                if (window.innerWidth <= 768) {
+                    if (sidebar.classList.contains('open')) {
+                        document.body.style.overflow = 'hidden';
+                    } else {
+                        document.body.style.overflow = '';
+                    }
+                }
+            }
+        });
+    });
+
+    observer.observe(sidebar, { attributes: true });
+}
+
+// Handle window resize
+let resizeTimer;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+        const sidebar = document.getElementById('sidebar');
+        if (sidebar && window.innerWidth > 768) {
+            // Reset mobile styles on desktop
+            sidebar.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+    }, 250);
+});
+
+// Improve touch scrolling on iOS
+if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+    document.addEventListener('touchmove', (e) => {
+        const target = e.target;
+        const scrollable = target.closest('.chat-container, .messages, .settings-main, .model-dropdown, .chat-history');
+
+        if (!scrollable) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+}
+
+console.log('✨ Mobile optimizations loaded!');

@@ -1330,31 +1330,489 @@ body {
     background: var(--text-secondary);
 }
 
-/* Mobile */
+/* Mobile & Tablet Optimization */
+
+/* Tablets (768px - 1024px) */
+@media (max-width: 1024px) {
+    .sidebar {
+        width: 200px;
+    }
+
+    .input-area {
+        left: 200px;
+    }
+
+    .sidebar.collapsed ~ .main .input-area {
+        left: 0;
+    }
+
+    .messages {
+        max-width: 600px;
+        padding: 16px 12px 140px;
+    }
+
+    .input-container {
+        max-width: 600px;
+    }
+}
+
+/* Mobile Landscape & Small Tablets (481px - 768px) */
 @media (max-width: 768px) {
+    body {
+        font-size: 14px;
+    }
+
     .sidebar {
         position: fixed;
         left: -240px;
         height: 100%;
         z-index: 100;
+        transition: left 0.3s ease;
     }
 
     .sidebar.open {
         left: 0;
-        transform: translateX(0);
+    }
+
+    /* Mobile overlay when sidebar is open */
+    .sidebar.open::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 240px;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: -1;
     }
 
     .input-area {
         left: 0;
+        padding: 12px;
     }
 
     .messages {
-        padding: 16px 12px 120px;
+        padding: 16px 12px 140px;
+        max-width: 100%;
     }
 
     .suggestion-chips {
-        flex-direction: column;
+        gap: 6px;
+    }
+
+    .suggestion-chip {
         width: 100%;
+        justify-content: center;
+        padding: 10px 14px;
+    }
+
+    /* Compact message styles */
+    .message.user .message-content {
+        max-width: 85%;
+        font-size: 14px;
+        padding: 10px 12px;
+    }
+
+    .message.ai .message-content {
+        font-size: 14px;
+    }
+
+    .message-avatar {
+        width: 24px;
+        height: 24px;
+    }
+
+    /* Compact input */
+    .input-wrapper {
+        padding: 10px 12px;
+        gap: 8px;
+    }
+
+    .model-selector-inline-btn {
+        padding: 6px 8px;
+        font-size: 11px;
+    }
+
+    #messageInput {
+        font-size: 14px;
+    }
+
+    .attach-btn,
+    .send-btn {
+        width: 32px;
+        height: 32px;
+    }
+
+    /* Settings modal full screen on mobile */
+    .settings-modal {
+        padding: 0;
+    }
+
+    .settings-content {
+        max-width: 100%;
+        height: 100%;
+        border-radius: 0;
+    }
+
+    .settings-sidebar {
+        width: 180px;
+    }
+
+    .settings-main {
+        padding: 16px;
+    }
+
+    /* User menu popup */
+    .user-menu-popup {
+        left: 12px;
+        bottom: 70px;
+        width: 216px;
+    }
+
+    /* Model dropdown */
+    .model-dropdown {
+        max-height: 300px;
+    }
+
+    /* Toast positioning */
+    .toast-container {
+        bottom: 100px;
+        left: 12px;
+        right: 12px;
+        transform: none;
+    }
+
+    /* Empty state */
+    .empty-state h1 {
+        font-size: 20px;
+    }
+
+    .empty-logo {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+/* Mobile Portrait (320px - 480px) */
+@media (max-width: 480px) {
+    body {
+        font-size: 14px;
+    }
+
+    .sidebar {
+        width: 280px;
+        left: -280px;
+    }
+
+    .sidebar.open::before {
+        left: 280px;
+    }
+
+    .sidebar-header {
+        padding: 10px;
+    }
+
+    .new-chat-btn {
+        font-size: 12px;
+        padding: 8px 10px;
+    }
+
+    .chat-item {
+        padding: 8px 6px;
+        font-size: 13px;
+    }
+
+    /* Messages */
+    .messages {
+        padding: 12px 8px 150px;
+    }
+
+    .message {
+        margin-bottom: 16px;
+    }
+
+    .message.user .message-content {
+        max-width: 90%;
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+
+    .message.ai {
+        gap: 8px;
+    }
+
+    .message.ai .message-content {
+        font-size: 14px;
+    }
+
+    .message.ai .message-content h1 { font-size: 18px; }
+    .message.ai .message-content h2 { font-size: 16px; }
+    .message.ai .message-content h3 { font-size: 15px; }
+
+    .message.ai .message-content pre {
+        padding: 10px;
+        font-size: 12px;
+    }
+
+    .code-header {
+        padding: 5px 8px;
+    }
+
+    .model-badge {
+        font-size: 10px;
+        padding: 2px 6px;
+    }
+
+    /* Input area */
+    .input-area {
+        padding: 10px 8px;
+    }
+
+    .input-wrapper {
+        padding: 8px 10px;
+        gap: 6px;
+        border-radius: 12px;
+    }
+
+    .input-top {
+        gap: 6px;
+    }
+
+    .model-selector-inline-btn {
+        padding: 5px 8px;
+        font-size: 11px;
+        gap: 4px;
+    }
+
+    .model-name-inline {
+        max-width: 80px;
+    }
+
+    #messageInput {
+        font-size: 14px;
+        max-height: 120px;
+    }
+
+    .attach-btn,
+    .send-btn {
+        width: 30px;
+        height: 30px;
+    }
+
+    .mode-pill {
+        padding: 4px 10px;
+        font-size: 11px;
+    }
+
+    .input-hint {
+        font-size: 10px;
+        margin-top: 8px;
+    }
+
+    /* Settings modal - stack vertically on small screens */
+    .settings-content {
+        flex-direction: column;
+        height: 100vh;
+    }
+
+    .settings-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .settings-nav {
+        flex-direction: row;
+        overflow-x: auto;
+        padding: 8px;
+    }
+
+    .settings-nav-item {
+        flex-shrink: 0;
+        padding: 8px 12px;
+        white-space: nowrap;
+    }
+
+    .settings-main {
+        padding: 12px;
+        flex: 1;
+    }
+
+    .settings-tab h3 {
+        font-size: 16px;
+    }
+
+    /* User menu */
+    .user-menu-popup {
+        left: 8px;
+        right: 8px;
+        width: auto;
+        bottom: 65px;
+    }
+
+    /* Model dropdown */
+    .model-dropdown,
+    .model-dropdown-inline {
+        max-height: 250px;
+    }
+
+    /* Toast */
+    .toast-container {
+        bottom: 90px;
+        left: 8px;
+        right: 8px;
+    }
+
+    .toast {
+        font-size: 12px;
+        padding: 8px 12px;
+    }
+
+    /* Empty state */
+    .empty-state {
+        padding: 20px 16px;
+    }
+
+    .empty-state h1 {
+        font-size: 18px;
+        margin-bottom: 16px;
+    }
+
+    .empty-logo {
+        width: 36px;
+        height: 36px;
+        margin-bottom: 12px;
+    }
+
+    .suggestion-chip {
+        font-size: 12px;
+        padding: 8px 12px;
+    }
+
+    /* Action buttons */
+    .action-btn {
+        width: 28px;
+        height: 28px;
+    }
+
+    /* Thinking block */
+    .thinking-block {
+        margin-bottom: 10px;
+    }
+
+    .thinking-header {
+        padding: 6px 8px;
+        font-size: 11px;
+    }
+
+    .thinking-content {
+        padding: 10px;
+        font-size: 13px;
+        max-height: 200px;
+    }
+
+    /* Context menu */
+    .context-menu {
+        min-width: 120px;
+    }
+
+    .context-menu-item {
+        padding: 8px 10px;
+        font-size: 13px;
+    }
+}
+
+/* Small Mobile (max 360px) */
+@media (max-width: 360px) {
+    .sidebar {
+        width: 260px;
+        left: -260px;
+    }
+
+    .sidebar.open::before {
+        left: 260px;
+    }
+
+    .messages {
+        padding: 10px 6px 150px;
+    }
+
+    .input-area {
+        padding: 8px 6px;
+    }
+
+    .input-wrapper {
+        padding: 8px;
+    }
+
+    .model-selector-inline-btn {
+        padding: 4px 6px;
+        font-size: 10px;
+    }
+
+    .model-name-inline {
+        max-width: 60px;
+    }
+
+    .attach-btn,
+    .send-btn {
+        width: 28px;
+        height: 28px;
+    }
+
+    .mode-pill {
+        padding: 4px 8px;
+        font-size: 10px;
+    }
+}
+
+/* Landscape orientation fixes */
+@media (max-height: 600px) and (orientation: landscape) {
+    .messages {
+        padding-bottom: 120px;
+    }
+
+    .input-area {
+        padding: 8px;
+    }
+
+    .settings-content {
+        height: 100vh;
+    }
+
+    .model-dropdown,
+    .model-dropdown-inline {
+        max-height: 200px;
+    }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+    /* Larger touch targets */
+    .chat-item,
+    .model-option,
+    .settings-nav-item,
+    .user-menu-item {
+        min-height: 44px;
+    }
+
+    .action-btn,
+    .attach-btn,
+    .send-btn {
+        min-width: 44px;
+        min-height: 44px;
+    }
+
+    /* Remove hover effects on touch devices */
+    .chat-item:hover,
+    .model-option:hover,
+    .suggestion-chip:hover {
+        background: transparent;
+    }
+
+    /* Show menu button always on touch */
+    .chat-item-menu {
+        opacity: 1;
     }
 }
 
