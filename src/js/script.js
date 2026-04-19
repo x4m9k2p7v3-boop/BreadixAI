@@ -845,7 +845,7 @@ async function callAIModel(userMessage, files = null) {
             temperature: 0.7
         };
 
-        const response = await fetch(API_CONFIG.chatUrl, {
+        const response = await fetch(API_CONFIG.fullChatUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -867,7 +867,7 @@ async function callAIModel(userMessage, files = null) {
 async function performWebSearch(query) {
     try {
 
-        const response = await fetch(API_CONFIG.searchUrl, {
+        const response = await fetch(API_CONFIG.fullSearchUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
