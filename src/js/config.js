@@ -18,7 +18,7 @@ const API_CONFIG = {
 const MODELS = {
     // Флагманские модели
     'kr/claude-sonnet-4.5': {
-        name: 'Claude Sonnet 4.5',
+        name: 'Claude Sonnet',
         category: 'flagship',
         description: 'Флагманская модель Anthropic с глубоким мышлением',
         maxTokens: 200000,
@@ -33,7 +33,7 @@ const MODELS = {
         hasVision: true
     },
     'kc/deepseek/deepseek-v3.2': {
-        name: 'DeepSeek V3.2',
+        name: 'DeepSeek V3',
         category: 'flagship',
         description: 'Продвинутая модель с глубоким анализом',
         maxTokens: 64000,
@@ -48,21 +48,21 @@ const MODELS = {
 
     // Продвинутые модели
     'kc/anthropic/claude-3-haiku': {
-        name: 'Claude 3 Haiku',
+        name: 'Claude Haiku',
         category: 'advanced',
         description: 'Быстрая и эффективная модель от Anthropic',
         maxTokens: 200000,
         hasVision: true
     },
     'kc/google/gemini-2.5-flash-lite': {
-        name: 'Gemini 2.5 Flash Lite',
+        name: 'Gemini Flash Lite',
         category: 'advanced',
         description: 'Облегчённая версия Gemini',
         maxTokens: 1000000,
         hasVision: true
     },
     'kc/deepseek/deepseek-chat-v3.1': {
-        name: 'DeepSeek Chat V3.1',
+        name: 'DeepSeek Chat',
         category: 'advanced',
         description: 'Чат-модель DeepSeek',
         maxTokens: 64000
@@ -89,7 +89,7 @@ const MODELS = {
 
     // Быстрые модели
     'kc/google/gemini-2.0-flash': {
-        name: 'Gemini 2.0 Flash',
+        name: 'Gemini Flash',
         category: 'fast',
         description: 'Молниеносная модель Google',
         maxTokens: 1000000,
@@ -103,7 +103,7 @@ const MODELS = {
         hasVision: true
     },
     'groq/llama-3.3-70b-versatile': {
-        name: 'Llama 3.3 70B',
+        name: 'Llama 3.3 Groq',
         category: 'fast',
         description: 'Универсальная модель Llama',
         maxTokens: 128000
