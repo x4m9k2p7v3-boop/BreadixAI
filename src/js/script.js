@@ -780,20 +780,16 @@ async function callAIModel(userMessage, files = null) {
         day: 'numeric'
     })}.`;
 
-    messages.push({
-        role: 'system',
-        content: systemPrompt
-    });
+    // System prompt теперь НЕ добавляется в messages
+    // Он будет передан отдельным полем в requestBody
 
     let searchResults = '';
     if (searchEnabled) {
         try {
             searchResults = await performWebSearch(userMessage);
             if (searchResults) {
-                messages.push({
-                    role: 'system',
-                    content: `Результаты поиска в интернете:\n\n${searchResults}\n\nИспользуй эту информацию для ответа на вопрос пользователя.`
-                });
+                // Результаты поиска добавляем к system prompt
+                // НЕ как отдельное сообщение
             }
         } catch (error) {
             console.error('Search error:', error);
@@ -846,9 +842,16 @@ async function callAIModel(userMessage, files = null) {
     }
 
     try {
+        // Формируем финальный system prompt с результатами поиска если есть
+        let finalSystemPrompt = systemPrompt;
+        if (searchResults) {
+            finalSystemPrompt += `\n\nРезультаты поиска в интернете:\n\n${searchResults}\n\nИспользуй эту информацию для ответа на вопрос пользователя.`;
+        }
+
         const requestBody = {
             model: currentModel,
-            messages: messages,
+            system: finalSystemPrompt,  // System prompt в отдельном поле
+            messages: messages,          // Только user/assistant сообщения
             stream: true,
             temperature: 0.7
         };
