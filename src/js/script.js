@@ -1258,10 +1258,9 @@ function createModelDropdownInline() {
     dropdown.id = 'modelDropdownInline';
 
     const categories = {
-        'openai': 'OpenAI',
-        'llama': 'Meta Llama',
-        'qwen': 'Qwen',
-        'other': 'Другие модели'
+        'flagship': 'Флагманские',
+        'advanced': 'Продвинутые',
+        'fast': 'Быстрые'
     };
 
     Object.entries(categories).forEach(([categoryKey, categoryName]) => {
