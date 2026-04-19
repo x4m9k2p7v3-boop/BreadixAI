@@ -68,7 +68,7 @@ const MODELS = {
 
     // Продвинутые модели
     'cerebras/llama-4-scout-17b-16e-instruct': {
-        name: 'Llama 4 Scout',
+        name: 'Llama 4 Scout 10M',
         category: 'advanced',
         description: 'Разведывательная модель Llama 4',
         maxTokens: 128000
@@ -101,7 +101,7 @@ const MODELS = {
         maxTokens: 128000
     },
     'kr/claude-haiku-4.5': {
-        name: 'Claude Haiku 4.6',
+        name: 'Claude Haiku 4.5',
         category: 'advanced',
         description: 'Быстрая и эффективная модель от Anthropic',
         maxTokens: 200000,
