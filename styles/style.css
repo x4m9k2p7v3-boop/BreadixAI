@@ -1704,7 +1704,8 @@ body {
    VISUAL EFFECTS
    ======================================== */
 
-/* 4. Ripple Effect */
+/* 4. Ripple Effect - DISABLED (caused button size issues) */
+/*
 .ripple {
     position: relative;
     overflow: hidden;
@@ -1728,8 +1729,10 @@ body {
     height: 50px;
     opacity: 0;
 }
+*/
 
-/* Apply ripple to buttons */
+/* Apply ripple to buttons - DISABLED */
+/*
 .send-btn,
 .new-chat-btn,
 .mode-pill,
@@ -1739,6 +1742,7 @@ body {
     position: relative;
     overflow: hidden;
 }
+*/
 
 /* 5. Skeleton Loading */
 .skeleton {
@@ -1944,12 +1948,14 @@ body.light-theme .neumorphic:active {
 }
 
 /* Enhanced animations */
+/* @keyframes ripple - DISABLED (caused button size issues)
 @keyframes ripple {
     to {
         transform: translate(-50%, -50%) scale(4);
         opacity: 0;
     }
 }
+*/
 
 /* Smooth transitions for all interactive elements */
 button,
