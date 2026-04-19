@@ -7,7 +7,14 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
+// CORS configuration for GitHub Pages and local development
+app.use(cors({
+    origin: [
+        'http://localhost:3000',
+        'https://x4m9k2p7v3-boop.github.io'
+    ],
+    credentials: true
+}));
 app.use(express.json({ limit: '10mb' }));
 
 // Serve static files from organized folders
